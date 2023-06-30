@@ -1,118 +1,19 @@
 import pygame
 import sys
 import time
+import random
 from pygame.locals import *
 from pygame.transform import flip
 from options import Options
+from personajes import Personajes
+from monedas import Moneda
 from movimientos import animaciones_personaje_1, animaciones_personaje_2
-from level_2 import Nivel_2
 
-class Personajes:
+class Texto:
     def __init__(self):
-        self.characters = [animaciones_personaje_1, animaciones_personaje_2]
-        self.personaje_actual = 0
-        self.vidas = 3
-        self.resistencia = 4
-        self.cambio_personaje_realizado = False
-        self.velocidad_movimiento = 3
-        self.movimiento_derecha = False
-        self.movimiento_izquierda = False
-        self.ataque = False
-        self.saltar = False
-        self.posicion_x = 100
-        self.direccion_personaje = "derecha"
-        self.en_suelo = True
-        self.sound_huntress_attack = pygame.mixer.Sound("Music/Arrow.wav")
-        self.sound_soulhunter_attack = pygame.mixer.Sound("Music/Sword.wav")
-        
-
-        
-    def eventos(self):
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                sys.exit()
-            elif event.type == KEYDOWN:
-                if event.key == K_RIGHT:
-                    self.movimiento_derecha = True
-                    self.direccion_personaje = "derecha"
-                elif event.key == K_LEFT:
-                    self.movimiento_izquierda = True
-                    self.direccion_personaje = "izquierda"
-                elif event.key == K_SPACE:
-                    self.saltar = True
-                elif event.key == K_a:
-                    self.ataque = True
-                    if self.personaje_actual == 0:
-                        self.sound_huntress_attack.play()
-                    elif self.personaje_actual == 1:
-                        self.sound_soulhunter_attack.play()
-                elif event.key == K_c:
-                    self.cambiar_personaje()
-            elif event.type == KEYUP:
-                if event.key == K_RIGHT:
-                    self.movimiento_derecha = False
-                elif event.key == K_LEFT:
-                    self.movimiento_izquierda = False
-                elif event.key == K_SPACE:
-                    self.saltar = False
-                elif event.key == K_a:
-                    self.ataque = False
-
-
-    def cambiar_personaje(self):
-            self.personaje_actual = (self.personaje_actual + 1) % len(self.characters)
-            self.resistencia = 4
-            self.cambio_personaje_realizado = True  # Marcar el cambio de personaje como realizado
-
-
-    def obtener_imagen_personaje_actual(self):
-            return self.characters[self.personaje_actual]
-
-
-    def recibir_golpe(self):
-        if self.resistencia > 0:
-            self.resistencia -= 1
-        if self.resistencia == 0 and not self.cambio_personaje_realizado:
-            self.vidas -= 1
-            if self.vidas > 0:
-                self.cambiar_personaje()
-            else:
-                self.resetear_juego()
-
-    def resetear_juego(self):
-        self.personaje_actual = 0
-        self.vidas = 3
-        self.resistencia = 4
-        self.cambio_personaje_realizado = False
-
-    def calcular_puntos(self):
-        puntos_por_vida = 250
-        puntos_por_resistencia = 150
-        total_puntos = self.vidas * puntos_por_vida + self.resistencia * puntos_por_resistencia
-        return total_puntos
-
-
-class Nivel_1:
-    def __init__(self):
-        
-        self.options = Options()
-        self.personajes = Personajes()
         self.SCREEN_WIDTH = 800
         self.SCREEN_HEIGHT = 600
-        self.posicion_y_inicial = self.SCREEN_HEIGHT - 100
-        self.posicion_y = self.posicion_y_inicial
         self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
-        self.clock = pygame.time.Clock()
-        self.fondo = pygame.image.load("Backgrounds/Level_1.jpg").convert()
-        self.flechas = []
-        self.frame_actual = 0
-        self.velocidad_animacion = 0.2
-        self.flecha_lanzada = False
-        self.flecha_posicion = None
-        pygame.mixer.music.load("Music/Main Theme.wav")
-        pygame.mixer.music.play(-1)
-
         self.font_path = "Constantine.ttf"
         self.font_size = 36
         self.font_inicio = pygame.font.Font(self.font_path, self.font_size)
@@ -120,82 +21,24 @@ class Nivel_1:
         self.texto_inicio_rect = self.texto_inicio.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2))
         self.animacion_inicio_tiempo = 3
         self.animacion_inicio_finalizado = False
-        self.animacion_inicio_inicial = time.time()
-        self.velocidad_salto = 30
-        self.altura_salto = 200
-        self.gravedad = 2
         self.puntaje = 0
         self.tiempo_inicial = time.time()
-        self.duracion_nivel = 6
+        self.duracion_nivel = 60
         self.tiempo_transcurrido = 0
+        self.animacion_inicio_inicial = time.time()
+        self.personajes = Personajes()
 
-
-    def recibir_golpe(self):
-        self.personajes.recibir_golpe()
-
-    def resetear_juego(self):
-        self.personajes.resetear_juego()
-        self.puntaje = self.personajes.calcular_puntos()
-
+    
     def formato_tiempo(self, tiempo_restante):
         minutos = int(tiempo_restante // 60)
         segundos = int(tiempo_restante % 60)
         return f"{minutos:02d}:{segundos:02d}"
 
-    
-        
-    def dibujar_personaje(self):
-        ancho_nuevo = 100
-        alto_nuevo = 100
-        accion_actual = 'quieto'
-        if self.personajes.movimiento_derecha or self.personajes.movimiento_izquierda:
-            accion_actual = 'correr'
-        if self.personajes.saltar and self.personajes.en_suelo:
-            accion_actual = 'saltar'
-        if self.personajes.ataque:
-            accion_actual = 'atacar'
-
-        if self.personajes.movimiento_derecha and self.personajes.posicion_x < self.SCREEN_WIDTH - ancho_nuevo - self.personajes.velocidad_movimiento:
-            self.personajes.posicion_x += self.personajes.velocidad_movimiento
-        elif self.personajes.movimiento_izquierda and self.personajes.posicion_x > 0:
-            self.personajes.posicion_x -= self.personajes.velocidad_movimiento
-
-        self.frame_actual = (self.frame_actual + 1) % len(self.personajes.obtener_imagen_personaje_actual()[accion_actual])
-        imagen_actual = self.personajes.obtener_imagen_personaje_actual()[accion_actual][self.frame_actual]
-        imagen_actual = pygame.transform.scale(imagen_actual, (ancho_nuevo, alto_nuevo))
-
-        if self.personajes.movimiento_izquierda:
-            imagen_actual = pygame.transform.flip(imagen_actual, True, False)
-        self.screen.blit(imagen_actual, (self.personajes.posicion_x, self.posicion_y))
-
-        #rectangulo_personaje = pygame.Rect(self.personajes.posicion_x, self.posicion_y, ancho_nuevo, alto_nuevo)
-        
-
-
-    def actualizar_salto(self):
-        if self.personajes.saltar and self.personajes.en_suelo:
-            self.personajes.en_suelo = False
-            self.altura_inicial = self.posicion_y
-            self.velocidad_vertical = -self.velocidad_salto
-
-        if not self.personajes.en_suelo:
-            self.velocidad_vertical += self.gravedad
-            self.posicion_y += self.velocidad_vertical
-
-            if self.posicion_y >= self.altura_inicial:
-                self.posicion_y = self.altura_inicial
-                self.personajes.en_suelo = True
-
-    
-    
-
-
     def dibujar_puntaje(self):
         font = pygame.font.Font(None, 24)
-        texto_puntaje = font.render("Puntaje: " + str(self.puntaje), True, (255, 255, 255))
+        texto_puntaje = font.render("Puntaje: " + str(self.personajes.puntos), True, (255, 255, 255))
         self.screen.blit(texto_puntaje, (10, 10))
 
-    
 
     def dibujar_tiempo_restante(self):
         font = pygame.font.Font(None, 24)
@@ -214,41 +57,169 @@ class Nivel_1:
             texto_resistencia = font.render("Resistencia: " + str(self.personajes.resistencia), True, (255, 255, 255))
             self.screen.blit(texto_resistencia, (self.SCREEN_WIDTH - texto_resistencia.get_width() - 10, 70))
 
+    def mostrar_mensaje_final(self):
+        score = self.personajes.calcular_puntos()
+        mensaje = f"Nivel completado. Total de puntos: {score}"
+        fuente = pygame.font.Font(None, 36)
+        texto = fuente.render(mensaje, True, (255, 255, 255))
+        texto_rect = texto.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2))
+        self.screen.blit(texto, texto_rect)
+        pygame.display.update() 
+        self.animacion_inicio_finalizado = True
+        time.sleep(3)
+
+
+class Nivel_1:
+    def __init__(self):
+        self.texto = Texto ()
+        self.options = Options()
+        self.personajes = Personajes()
+        self.velocidad_caida_monedas = 2
+        self.monedas = []
+        self.SCREEN_WIDTH = 800
+        self.SCREEN_HEIGHT = 600
+        self.posicion_y_inicial = self.SCREEN_HEIGHT - 100
+        self.posicion_y = self.posicion_y_inicial
+        self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
+        self.clock = pygame.time.Clock()
+        self.fondo = pygame.image.load("Backgrounds/Level_1.jpg").convert()
+        self.flechas = []
+        self.frame_actual = 0
+        self.duracion_nivel = self.texto.duracion_nivel
+        self.velocidad_animacion = 0.2
+        self.flecha_lanzada = False
+        self.flecha_posicion = None
+        self.velocidad_salto = 25
+        self.altura_salto = 200
+        self.gravedad = 2
+
+        pygame.mixer.music.load("Music/Main Theme.wav")
+        pygame.mixer.music.play(-1)
+
+
+    def recibir_golpe(self):
+        self.personajes.recibir_golpe()
+
+    def resetear_juego(self):
+        self.personajes.resetear_juego()
+        self.puntaje = self.personajes.calcular_puntos()
+
+    def caer_monedas(self):
+        if random.random() < 0.01:  
+            nueva_moneda = Moneda()  
+            self.monedas.append(nueva_moneda)  
+
+        # Hacer que las monedas caigan
+        for moneda in self.monedas:
+            x, y = moneda.posicion_actual()
+            y += self.velocidad_caida_monedas
+            moneda.posicion = (x, y)
+
+            # Eliminar las monedas que hayan alcanzado el límite inferior de la pantalla
+            if y > self.SCREEN_HEIGHT:
+                self.monedas.remove(moneda)
+
+            if random.random() < 0.01:
+                indice = random.randint(0, len(moneda.imagenes) - 1)
+                moneda.cambiar_imagen(indice)
+                moneda.redimensionar_imagen(30, 30)  
+
+    def dibujar_monedas(self):
+        for moneda in self.monedas:
+            x, y = moneda.posicion
+            moneda.redimensionar_imagen(30, 30)  
+            imagen_moneda = moneda.imagen_actual[0]
+            self.screen.blit(imagen_moneda, (x, y))
+
+
+        
+    def dibujar_personaje(self):
+        ancho_nuevo = 100
+        alto_nuevo = 100
+        accion_actual = 'quieto'
+        if self.personajes.movimiento_derecha or self.personajes.movimiento_izquierda:
+            accion_actual = 'correr'
+        if self.personajes.saltar and self.personajes.en_suelo:
+            accion_actual = 'saltar'
+        if self.personajes.ataque:
+            accion_actual = 'atacar'
+
+        if self.personajes.movimiento_derecha and self.personajes.posicion_x < self.SCREEN_WIDTH - ancho_nuevo - self.personajes.velocidad_movimiento:
+            self.personajes.posicion_x += self.personajes.velocidad_movimiento
+        elif self.personajes.movimiento_izquierda and self.personajes.posicion_x > 0:
+            self.personajes.posicion_x -= self.personajes.velocidad_movimiento
+
+        self.personajes.actualizar_rectangulo_personaje()  # Actualizar rectángulo del personaje
+
+        self.frame_actual = (self.frame_actual + 1) % len(self.personajes.obtener_imagen_personaje_actual()[accion_actual])
+        imagen_actual = self.personajes.obtener_imagen_personaje_actual()[accion_actual][self.frame_actual]
+        imagen_actual = pygame.transform.scale(imagen_actual, (ancho_nuevo, alto_nuevo))
+
+        if self.personajes.movimiento_izquierda:
+            imagen_actual = pygame.transform.flip(imagen_actual, True, False)
+        self.screen.blit(imagen_actual, (self.personajes.posicion_x, self.posicion_y))
+
+        #rectangulo_personaje = pygame.Rect(self.personajes.posicion_x, self.posicion_y, ancho_nuevo, alto_nuevo)
+        
+
+    def actualizar_salto(self):
+        if self.personajes.saltar and self.personajes.en_suelo:
+            self.personajes.en_suelo = False
+            self.altura_inicial = self.posicion_y
+            self.velocidad_vertical = -self.velocidad_salto
+
+        if not self.personajes.en_suelo:
+            self.velocidad_vertical += self.gravedad
+            self.posicion_y += self.velocidad_vertical
+
+            if self.posicion_y >= self.altura_inicial:
+                self.posicion_y = self.altura_inicial
+                self.personajes.en_suelo = True
+
+    def colision_monedas(self):
+        personaje_rect = self.personajes.personaje_rect
+        
+        for moneda in self.monedas:
+            moneda_rect = pygame.Rect(moneda.posicion_actual(), moneda.imagen_actual[0].get_size())
+            if personaje_rect.colliderect(moneda_rect):
+                self.personajes.puntos += moneda.imagen_actual[2]
+                self.monedas.remove(moneda)
+
+
 
     def dibujar_elementos(self):
         self.screen.blit(self.fondo, (0, 0))
         self.dibujar_personaje()
-        self.dibujar_puntaje()
-        self.dibujar_tiempo_restante()
-
-
+        self.dibujar_monedas()
+        self.texto.dibujar_puntaje()
+        self.texto.dibujar_tiempo_restante()
         pygame.display.flip()
 
+    def actualizar_tiempo_transcurrido(self):
+        self.texto.tiempo_transcurrido += self.clock.tick(60) / 1000.0
+
+        if self.texto.animacion_inicio_finalizado:
+            if self.texto.tiempo_transcurrido >= 3.0:
+                self.screen.blit(self.fondo, (0, 0))
 
     
 
     def run(self):
         while True:
-            self.screen.fill((0, 0, 0))
-
-            # Capturar eventos y actualizar estados del personaje
             self.personajes.eventos()
+            self.actualizar_tiempo_transcurrido()
 
-            self.tiempo_transcurrido += self.clock.tick(60) / 1000.0
-
-            if self.animacion_inicio_finalizado:
-                if self.tiempo_transcurrido >= 3.0:
-                    self.screen.blit(self.fondo, (0, 0))
-
-            if self.animacion_inicio_finalizado:
-                # Dibujar elementos en pantalla
-                self.dibujar_elementos()
-
-                # Actualizar posición del fondo y personaje
+            if self.texto.animacion_inicio_finalizado:
                 self.actualizar_salto()
+                self.caer_monedas()
+                self.colision_monedas()
+                self.dibujar_elementos()
+                
+
                 # Dibujar y actualizar la posición de la flecha
-                if self.personajes.ataque and not self.flecha_posicion:
+                if self.personajes.ataque and not self.flecha_posicion and self.personajes.personaje_actual == 0:
                     self.flecha_posicion = [self.personajes.posicion_x, self.posicion_y]  # Inicializar la posición de la flecha
+
 
                 if self.flecha_posicion:
                     x, y = self.flecha_posicion  # Obtener las coordenadas x e y de self.flecha_posicion
@@ -270,29 +241,20 @@ class Nivel_1:
                     flecha_rect.center = (self.flecha_posicion[0], self.flecha_posicion[1])
                     self.screen.blit(flecha_imagen, flecha_rect)
 
-                tiempo_restante = self.duracion_nivel - (time.time() - self.tiempo_inicial)
+                
+
+                tiempo_restante = self.duracion_nivel - (time.time() - self.texto.tiempo_inicial)
                 if tiempo_restante <= 0 or self.personajes.vidas <= 0:
-                    self.mostrar_mensaje_final()
-                    break  # Salir del bucle while y terminar el nivel
+                    self.texto.mostrar_mensaje_final()
+                    self.animacion_inicio_finalizado = True  # Actualizar animacion_inicio_finalizado
+
+                    break
 
             else:
                 tiempo_actual = time.time()
-                tiempo_transcurrido = tiempo_actual - self.animacion_inicio_inicial
-                if tiempo_transcurrido >= self.animacion_inicio_tiempo:
-                    self.animacion_inicio_finalizado = True
-                self.screen.blit(self.texto_inicio, self.texto_inicio_rect)
+                tiempo_transcurrido = tiempo_actual - self.texto.animacion_inicio_inicial
+                if tiempo_transcurrido >= self.texto.animacion_inicio_tiempo:
+                    self.texto.animacion_inicio_finalizado = True  # Actualizar animacion_inicio_finalizado
+                self.screen.blit(self.texto.texto_inicio, self.texto.texto_inicio_rect)
 
-            pygame.display.flip()
-
-    def mostrar_mensaje_final(self):
-        puntaje = self.personajes.calcular_puntos()  # Llamar al método calcular_puntos de la instancia de Personajes
-        mensaje = f"Nivel completado. Total de puntos: {puntaje}"
-        fuente = pygame.font.Font(None, 36)
-        texto = fuente.render(mensaje, True, (255, 255, 255))
-        texto_rect = texto.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2))
-        self.screen.blit(texto, texto_rect)
-        pygame.display.flip()
-
-        # Esperar 3 segundos antes de volver al menú principal
-        time.sleep(3)
-    
+            pygame.display.update()
