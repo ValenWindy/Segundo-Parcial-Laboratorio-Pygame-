@@ -1,6 +1,7 @@
 import pygame
 from pygame import mixer
 from level_1 import Nivel_1
+from level_2 import Nivel_2
 
 class SeleccionarNiveles:
     volumen = 0.5  # Valor predeterminado del volumen
@@ -54,6 +55,10 @@ class SeleccionarNiveles:
                             if nivel == "Nivel 1":
                                 nivel_1 = Nivel_1()  # Crear una instancia de la clase Nivel_1
                                 nivel_1.run()
+                            if nivel == "Nivel 2":
+                                nivel_2 = Nivel_2()  # Crear una instancia de la clase Nivel_1
+                                nivel_2.run()
+                            
                             # Lógica para cargar el nivel seleccionado
 
             self.screen.blit(self.background, (0, 0))
