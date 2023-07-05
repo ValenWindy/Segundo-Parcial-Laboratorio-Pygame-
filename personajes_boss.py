@@ -4,14 +4,13 @@ import time
 import threading
 from pygame.locals import *
 from movimientos import animaciones_personaje_1, animaciones_personaje_2
-from plataformas import Plataformas
+
 
 
 class Personajes:
     def __init__(self):
         self.characters = [animaciones_personaje_1, animaciones_personaje_2]
         self.personaje_actual = 0
-        self.plataformas = Plataformas()
         self.puntos = 0
         self.vidas = 3
         self.resistencia = 4
@@ -32,8 +31,8 @@ class Personajes:
         self.posicion_y = self.posicion_y_inicial
         self.direccion_personaje = "derecha"
         self.velocidad_salto = 30
-        self.altura_salto = 300
-        self.gravedad = 1.5
+        self.altura_salto = 500
+        self.gravedad = 1
         self.velocidad_animacion = 0.2
         self.frame_actual = 0
         self.velocidad_vertical = 0
@@ -43,8 +42,6 @@ class Personajes:
         self.plataforma_piso_rect = pygame.Rect(0, self.piso_y, self.posicion_x, 20)
         self.rectangulo_ataque_personaje_2 = pygame.Rect(0, 0, 100, 50)
         self.rectangulo_flecha = pygame.Rect(0, 0, 50, 20)
-
-
         self.flecha_posicion = None
         self.en_suelo = True
         self.sound_huntress_attack = pygame.mixer.Sound("Music/Arrow.wav")
@@ -80,25 +77,6 @@ class Personajes:
 
         if not self.en_suelo:
             self.velocidad_vertical += self.gravedad
-
-            # Verificar colisión con las plataformas
-            plataforma_actual = self.plataformas.obtener_plataforma_actual(self.personaje_rect)
-            if plataforma_actual is not None:
-                if self.velocidad_vertical > 0 and self.personaje_rect.colliderect(plataforma_actual) and self.posicion_y >= plataforma_actual.top - self.personaje_rect.height:
-                    self.posicion_y = plataforma_actual.top - self.personaje_rect.height
-                    self.velocidad_vertical = 0
-                    self.en_suelo = True
-                elif self.velocidad_vertical < 0 and self.posicion_y <= plataforma_actual.bottom:
-                    self.posicion_y = plataforma_actual.bottom
-                    self.velocidad_vertical = self.gravedad  # Aplicar gravedad si el personaje supera la plataforma
-                elif self.velocidad_vertical > 0 and self.personaje_rect.colliderect(plataforma_actual) and self.personaje_rect.bottom >= plataforma_actual.top:
-                    self.posicion_y = plataforma_actual.top - self.personaje_rect.height
-                    self.velocidad_vertical = 0
-                    self.en_suelo = True
-                elif self.velocidad_vertical > 0 and plataforma_actual.top is not None and self.posicion_y <= plataforma_actual.top:
-                    self.velocidad_vertical = self.gravedad
-
-            # Actualizar la posición vertical del personaje
             self.posicion_y += self.velocidad_vertical
 
             # Verificar si el personaje ha caído al suelo

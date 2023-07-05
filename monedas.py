@@ -2,13 +2,14 @@ import random
 import pygame
 
 
-class Moneda:
+class Monedas:
     def __init__(self):
         self.imagenes = []
         self.cargar_imagenes()
         self.imagen_actual = self.imagenes[0]
         self.posicion = self.generar_posicion()
         self.tipo = ""
+        
 
     def cargar_imagenes(self):
         self.imagenes.append((pygame.image.load("Coins/Bronze/Bronze_10.png"), "Bronce", 100))
@@ -19,6 +20,7 @@ class Moneda:
         for i in range(len(self.imagenes)):
             imagen, _, _ = self.imagenes[i]
             self.imagenes[i] = (pygame.transform.scale(imagen, (30, 30)), self.imagenes[i][1], self.imagenes[i][2])
+
 
     def cambiar_imagen(self, indice):
         self.imagen_actual = self.imagenes[indice]

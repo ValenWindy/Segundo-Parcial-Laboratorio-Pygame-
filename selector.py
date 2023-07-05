@@ -2,6 +2,8 @@ import pygame
 from pygame import mixer
 from level_1 import Nivel_1
 from level_2 import Nivel_2
+from level_3 import Nivel_3
+from level_4 import Nivel_4
 
 class SeleccionarNiveles:
     volumen = 0.5  # Valor predeterminado del volumen
@@ -58,6 +60,13 @@ class SeleccionarNiveles:
                             if nivel == "Nivel 2":
                                 nivel_2 = Nivel_2()  # Crear una instancia de la clase Nivel_1
                                 nivel_2.run()
+                            if nivel == "Nivel 3":
+                                nivel_3 = Nivel_3()  # Crear una instancia de la clase Nivel_1
+                                nivel_3.run()
+                            if nivel == "Nivel 4":
+                                nivel_4 = Nivel_4()  # Crear una instancia de la clase Nivel_1
+                                nivel_4.run()
+                            
                             
                             # Lógica para cargar el nivel seleccionado
 
