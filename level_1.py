@@ -8,8 +8,7 @@ from texto import Texto
 from personajes import Personajes
 from monedas import Monedas
 from plataformas import Plataformas
-from movimientos import animaciones_personaje_1, animaciones_personaje_2
-
+from level_2 import Nivel_2
 
 
 class Nivel_1:
@@ -31,8 +30,7 @@ class Nivel_1:
         self.duracion_nivel = self.texto.duracion_nivel
         pygame.mixer.music.load("Music/Main Theme.wav")
         pygame.mixer.music.play(-1)
-
-
+        
 
     def caer_monedas(self):
         if random.random() < 0.01:  
@@ -98,8 +96,12 @@ class Nivel_1:
         self.screen.blit(self.fondo, (0, 0))
         self.screen.blit(texto, texto_rect)
         pygame.display.update()
-        self.animacion_inicio_finalizado = True
+        self.texto.animacion_inicio_finalizado = True
         time.sleep(3)
+
+        nivel_2 = Nivel_2()
+        nivel_2.run()
+        
 
 
     def run(self):

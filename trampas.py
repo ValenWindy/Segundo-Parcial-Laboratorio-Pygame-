@@ -53,10 +53,10 @@ class Trampas:
 
         for trampa in self.lista_trampas_rojas:
             trampa['surface'].move_ip(-self.velocidad, 0)
-            pygame.draw.rect(self.screen, (255, 0, 0), trampa['surface'])  # Dibujar rectángulo rojo
+            # pygame.draw.rect(self.screen, (255, 0, 0), trampa['surface'])  # Dibujar rectángulo rojo
             self.screen.blit(trampa['image'], trampa['surface'])
 
         for trampa in self.lista_trampas_azules:
             trampa['surface'].move_ip(-self.velocidad, 0)
-            pygame.draw.rect(self.screen, (0, 0, 255), trampa['surface'])  # Dibujar rectángulo azul
+            # pygame.draw.rect(self.screen, (0, 0, 255), trampa['surface'])  # Dibujar rectángulo azul
             self.screen.blit(trampa['image'], trampa['surface'])

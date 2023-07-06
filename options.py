@@ -20,7 +20,7 @@ class Options:
         # Inicializar la música
         pygame.mixer.init()
         mixer.music.load("Music/Main Theme.wav")
-        mixer.music.play(-1)  # Reproducir en bucle
+        mixer.music.play(-1) 
 
         # Teclas de jugabilidad
         self.key_mappings = {

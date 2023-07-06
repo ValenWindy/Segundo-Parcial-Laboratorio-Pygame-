@@ -2,6 +2,7 @@ import pygame
 import sys
 import time
 import random
+
 from pygame.locals import *
 from options import Options
 from texto import Texto 
@@ -10,6 +11,8 @@ from monedas import Monedas
 from plataformas import Plataformas
 from enemigos import Enemigos
 from trampas import Trampas
+from fruta import Frutas
+from level_4 import Nivel_4
 
 
 
@@ -19,6 +22,7 @@ class Nivel_3:
         self.options = Options()
         self.personajes = Personajes()
         self.plataformas = Plataformas()
+        self.frutas = Frutas()
         self.texto = Texto(self.nivel, self.personajes)
         self.enemigos = Enemigos()
         self.trampas = Trampas()
@@ -32,25 +36,21 @@ class Nivel_3:
         self.clock = pygame.time.Clock()
         self.fondo = pygame.image.load("Backgrounds/Level_3.jpg").convert()
         self.titulo = pygame.display.set_caption("The Huntress and the Soulhunter")
-        self.duracion_nivel = self.texto.duracion_nivel
-        self.enemigos.crear_enemigo()     
+        self.duracion_nivel = self.texto.duracion_nivel     
+        self.enemigos.crear_enemigo_suelo()     
         pygame.mixer.music.load("Music/Main Theme.wav")
         pygame.mixer.music.play(-1)
-        self.enemigos.crear_enemigo()
         self.tiempo_creacion_enemigo = 10.0
         self.ultimo_tiempo_creacion_enemigo = time.time()
+        
 
     def crear_enemigo_periodico(self):
         tiempo_actual = time.time()
         if tiempo_actual - self.ultimo_tiempo_creacion_enemigo >= self.tiempo_creacion_enemigo:
-            self.enemigos.crear_enemigo()
+            nuevo_enemigo = self.enemigos.crear_enemigo_suelo()
+            nuevo_enemigo.posicion_x = random.randint(0, self.SCREEN_WIDTH - nuevo_enemigo.enemigo_rect.width)
+            nuevo_enemigo.posicion_x_inicial = nuevo_enemigo.posicion_x
             self.ultimo_tiempo_creacion_enemigo = tiempo_actual
-
-            for enemigo in self.enemigos.lista_enemigos:
-                self.screen.blit(
-                    pygame.transform.scale(enemigo.imagen_actual, enemigo.tamano_rectangulo),
-                    (enemigo.posicion_x, enemigo.posicion_y)
-                )
 
         self.enemigos.actualizar_enemigos()
         self.enemigos.dibujar_enemigos()
@@ -94,12 +94,25 @@ class Nivel_3:
                 print(self.personajes.puntos)
                 self.monedas.remove(moneda)
 
-    
+    def colision_frutas(self):
+        personaje_rect = self.personajes.personaje_rect
+
+        for fruta in self.frutas.lista_frutas:
+            fruta_rect = fruta["rect"]
+            if personaje_rect.colliderect(fruta_rect):
+                tipo_fruta = fruta["tipo"]
+                if tipo_fruta == "Banana":
+                    self.personajes.resistencia += 1
+                elif tipo_fruta == "Manzana":
+                    self.personajes.vidas += 1
+                self.frutas.lista_frutas.remove(fruta)
+                break
+
 
     def colision_enemigos(self):
         personaje_rect = self.personajes.personaje_rect
         
-        for enemigo in self.enemigos.lista_enemigos:
+        for enemigo in self.enemigos.lista_enemigos_suelo:
             enemigo_rect = enemigo.enemigo_rect
             
             # Colisión con el personaje
@@ -176,9 +189,9 @@ class Nivel_3:
                         break
         elif self.personajes.personaje_actual == 0:  # Solo para el personaje 1
             if self.personajes.ataque and self.personajes.flecha_posicion:
-                for enemigo in self.enemigos.lista_enemigos:
+                for enemigo in self.enemigos.lista_enemigos_suelo:
                     if self.personajes.rectangulo_flecha.colliderect(enemigo.enemigo_rect):
-                        self.enemigos.lista_enemigos.remove(enemigo)
+                        self.enemigos.lista_enemigos_suelo.remove(enemigo)
                         self.personajes.puntos += enemigo.valor
                         self.personajes.flecha_posicion = None
                         break
@@ -192,6 +205,8 @@ class Nivel_3:
         self.trampas.dibujar_trampas()
         self.crear_enemigo_periodico()
         self.dibujar_monedas()
+        self.frutas.dibujar_fruta()
+        self.frutas.generar_frutas()  
         self.texto.dibujar_puntaje(self.personajes.puntos, self.personajes.vidas, self.personajes.resistencia)
         self.texto.dibujar_tiempo_restante()
 
@@ -200,14 +215,14 @@ class Nivel_3:
         # pygame.draw.rect(self.screen, (255, 0, 0), self.plataformas.plataforma_grande_izquierda_rect)
 
         if self.personajes.inmunidad:
-            pygame.draw.rect(self.screen, (255, 255, 0), self.personajes.personaje_rect)  # Dibujar rectángulo amarillo para indicar inmunidad
+            pygame.draw.rect(self.screen, (255, 255, 0), self.personajes.personaje_rect, 2)  # Dibujar rectángulo amarillo para indicar inmunidad
         else:
-            pygame.draw.rect(self.screen, (0, 255, 0), self.personajes.personaje_rect, 2)  # Dibujar rectángulo verde normalmente
+            pass
+            # pygame.draw.rect(self.screen, (0, 255, 0), self.personajes.personaje_rect, 2)  # Dibujar rectángulo verde normalmente
 
         pygame.display.flip()
     
-
-
+    
     def actualizar_tiempo_transcurrido(self):
         self.texto.tiempo_transcurrido += self.clock.tick(60) / 1000.0
 
@@ -233,8 +248,11 @@ class Nivel_3:
         self.screen.blit(self.fondo, (0, 0))
         self.screen.blit(texto, texto_rect)
         pygame.display.update()
-        self.animacion_inicio_finalizado = True
+        self.texto.animacion_inicio_finalizado = True
         time.sleep(3)
+        nivel_4 = Nivel_4()
+        nivel_4.run()
+
 
     def game_over(self):
         mensaje = "FIN DEL JUEGO "
@@ -259,6 +277,7 @@ class Nivel_3:
                 self.personajes.actualizar_salto()
                 self.caer_monedas()
                 self.colision_monedas()
+                self.colision_frutas()
                 self.colision_enemigos()
                 self.colision_ataque()
                 self.dibujar_elementos()

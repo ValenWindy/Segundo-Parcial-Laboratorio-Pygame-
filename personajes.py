@@ -13,7 +13,7 @@ class Personajes:
         self.personaje_actual = 0
         self.plataformas = Plataformas()
         self.puntos = 0
-        self.vidas = 3
+        self.vidas = 1
         self.resistencia = 4
         self.inmunidad = False  
         self.inicio_inmunidad = 0
@@ -42,9 +42,7 @@ class Personajes:
         self.piso_y = self.SCREEN_HEIGHT - 100 
         self.plataforma_piso_rect = pygame.Rect(0, self.piso_y, self.posicion_x, 20)
         self.rectangulo_ataque_personaje_2 = pygame.Rect(0, 0, 100, 50)
-        self.rectangulo_flecha = pygame.Rect(0, 0, 50, 20)
-
-
+        self.rectangulo_flecha = pygame.Rect(0, 0, 100, 100)
         self.flecha_posicion = None
         self.en_suelo = True
         self.sound_huntress_attack = pygame.mixer.Sound("Music/Arrow.wav")
@@ -136,7 +134,7 @@ class Personajes:
 
 
         # Dibujar rectángulo del personaje
-        pygame.draw.rect(self.screen, (0, 255, 0), self.personaje_rect, 2)
+        # pygame.draw.rect(self.screen, (0, 255, 0), self.personaje_rect, 2)
 
         if self.ataque and self.personaje_actual == 1:  # Solo aplicar para el Personaje 2
             # Establecer la posición del rectángulo de ataque según la dirección del personaje
@@ -148,7 +146,7 @@ class Personajes:
             self.rectangulo_ataque_personaje_2.centery = self.personaje_rect.centery
 
             # Dibujar el rectángulo de ataque
-            pygame.draw.rect(self.screen, (255, 0, 0), self.rectangulo_ataque_personaje_2)
+            # pygame.draw.rect(self.screen, (255, 0, 0), self.rectangulo_ataque_personaje_2)
 
         # Actualizar el rectángulo del personaje
         self.personaje_rect = pygame.Rect(self.posicion_x, self.posicion_y, 100, 100)
@@ -213,7 +211,6 @@ class Personajes:
         if self.resistencia < 0:
             self.resistencia = 0
 
-    
 
     def actualizar_flecha(self):
         if self.ataque and not self.flecha_posicion and self.personaje_actual == 0:
@@ -238,14 +235,12 @@ class Personajes:
     def dibujar_flecha(self):
         if self.flecha_posicion:
             flecha_imagen = self.obtener_imagen_personaje_actual()['flecha']
-            flecha_redimensionada = pygame.transform.scale(flecha_imagen[0], (50, 20))
-
-            # Obtener el rectángulo de la flecha
-            flecha_rect = flecha_redimensionada.get_rect()
-            flecha_rect.center = self.flecha_posicion
+            flecha_redimensionada = pygame.transform.scale(flecha_imagen[0], (48, 48))
+            self.flecha_rect = flecha_redimensionada.get_rect()
+            self.flecha_rect.center = self.flecha_posicion
 
             # Dibujar el rectángulo de la flecha
-            pygame.draw.rect(self.screen, (255, 0, 0), self.rectangulo_flecha, 2)
+            # pygame.draw.rect(self.screen, (255, 0, 0), self.flecha_rect, 2)
 
 
             self.screen.blit(flecha_redimensionada, self.flecha_posicion)

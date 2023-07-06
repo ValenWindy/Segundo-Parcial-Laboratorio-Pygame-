@@ -3,15 +3,13 @@ from pygame import mixer
 from options import Options
 from selector import SeleccionarNiveles
 from level_1 import Nivel_1
-from level_2 import Nivel_2
-# from level_3 import Nivel_3
-# from level_4 import Nivel_4
+
 
 
 
 class Menu:
-    volumen = 0.5  # Valor predeterminado del volumen
-    volumen_guardado = volumen  # Variable para almacenar el volumen actual
+    volumen = 0.5  
+    volumen_guardado = volumen 
 
     def __init__(self):
         pygame.init()
@@ -25,20 +23,19 @@ class Menu:
         self.font = pygame.font.Font(self.font_path, self.font_size)
         self.regresar_a_menu = False
         
-        # Inicializar la música
+        
         pygame.mixer.init()
         mixer.music.load ("Music/Main Theme.wav") 
         mixer.music.play(-1) 
     def volver_menu_principal(self):
         self.regresar_a_menu = True
-    
 
         print("Volviendo al menú principal")
 
 
     def iniciar_juego(self):
         print("Iniciando juego...")
-        nivel_1 = Nivel_1()  # Crear una instancia de la clase Nivel_1
+        nivel_1 = Nivel_1() 
         nivel_1.run()
 
     def mostrar_opciones(self):
@@ -92,4 +89,3 @@ class Menu:
             pygame.display.flip()
         return self.regresar_a_menu
     pygame.quit()
-       

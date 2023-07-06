@@ -31,7 +31,6 @@ class Nivel_4:
         pygame.mixer.music.play(-1)
     
 
-
     # def colision_enemigos(self):
     #     personaje_rect = self.personajes.personaje_rect
         
@@ -89,12 +88,12 @@ class Nivel_4:
         # pygame.draw.rect(self.screen, (255, 0, 0), self.plataformas.plataforma_grande_izquierda_rect)
 
         if self.personajes.inmunidad:
-            pygame.draw.rect(self.screen, (255, 255, 0), self.personajes.personaje_rect)  # Dibujar rectángulo amarillo para indicar inmunidad
+            pygame.draw.rect(self.screen, (255, 255, 0), self.personajes.personaje_rect, 2)  # Dibujar rectángulo amarillo para indicar inmunidad
         else:
             pygame.draw.rect(self.screen, (0, 255, 0), self.personajes.personaje_rect, 2)  # Dibujar rectángulo verde normalmente
 
     
-
+    
 
     def actualizar_tiempo_transcurrido(self):
         self.texto.tiempo_transcurrido += self.clock.tick(60) / 1000.0
@@ -113,7 +112,7 @@ class Nivel_4:
 
     def mostrar_mensaje_final(self, puntos):
         score = self.personajes.calcular_puntos(puntos)
-        mensaje = f"Nivel {self.nivel} completado. Total de puntos: {score}"
+        mensaje = f"Nivel {self.nivel} completado. Total de puntos: {score}. Gracias por jugar"
         fuente = pygame.font.Font(None, 36)
         texto = fuente.render(mensaje, True, (255, 255, 255))
         texto_rect = texto.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2))
@@ -121,8 +120,10 @@ class Nivel_4:
         self.screen.blit(self.fondo, (0, 0))
         self.screen.blit(texto, texto_rect)
         pygame.display.update()
-        self.animacion_inicio_finalizado = True
+        self.texto.animacion_inicio_finalizado = True
         time.sleep(3)
+
+
 
     def game_over(self):
         mensaje = "FIN DEL JUEGO "

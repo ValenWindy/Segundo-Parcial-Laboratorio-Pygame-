@@ -45,9 +45,17 @@ class Plataformas:
 
         self.screen.blit(imagen_plataforma_grande_izquierda, self.plataforma_grande_izquierda_rect)
         self.screen.blit(imagen_plataforma_grande_derecha, self.plataforma_grande_derecha_rect)
+        return self.lista_plataformas
 
     def obtener_plataforma_actual(self, personaje_rect):
         for plataforma in self.lista_plataformas:
             if personaje_rect.colliderect(plataforma):
                 return plataforma
         return None
+
+    def obtener_plataforma_superior(self):
+        plataforma_superior = None
+        for plataforma in self.lista_plataformas:
+            if plataforma_superior is None or plataforma.top < plataforma_superior.top:
+                plataforma_superior = plataforma
+        return plataforma_superior
