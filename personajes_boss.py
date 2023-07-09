@@ -13,8 +13,9 @@ class Personajes:
         self.personaje_actual = 0
         self.puntos = 0
         self.vidas = 3
-        self.resistencia = 4
+        self.resistencia = 3
         self.inmunidad = False  
+        self.inmunidad_invisible = False
         self.inicio_inmunidad = 0
         self.cambio_personaje_realizado = False
         self.velocidad_movimiento = 10
@@ -79,7 +80,6 @@ class Personajes:
             self.velocidad_vertical += self.gravedad
             self.posicion_y += self.velocidad_vertical
 
-            # Verificar si el personaje ha caído al suelo
             if self.posicion_y >= self.piso_y:
                 self.posicion_y = self.piso_y
                 self.en_suelo = True
@@ -114,7 +114,7 @@ class Personajes:
 
 
         # Dibujar rectángulo del personaje
-        pygame.draw.rect(self.screen, (0, 255, 0), self.personaje_rect, 2)
+    #    pygame.draw.rect(self.screen, (0, 255, 0), self.personaje_rect, 2)
 
         if self.ataque and self.personaje_actual == 1:  # Solo aplicar para el Personaje 2
             # Establecer la posición del rectángulo de ataque según la dirección del personaje
@@ -126,7 +126,7 @@ class Personajes:
             self.rectangulo_ataque_personaje_2.centery = self.personaje_rect.centery
 
             # Dibujar el rectángulo de ataque
-            pygame.draw.rect(self.screen, (255, 0, 0), self.rectangulo_ataque_personaje_2)
+            # pygame.draw.rect(self.screen, (255, 0, 0), self.rectangulo_ataque_personaje_2)
 
         # Actualizar el rectángulo del personaje
         self.personaje_rect = pygame.Rect(self.posicion_x, self.posicion_y, 100, 100)
@@ -216,14 +216,14 @@ class Personajes:
     def dibujar_flecha(self):
         if self.flecha_posicion:
             flecha_imagen = self.obtener_imagen_personaje_actual()['flecha']
-            flecha_redimensionada = pygame.transform.scale(flecha_imagen[0], (50, 20))
+            flecha_redimensionada = pygame.transform.scale(flecha_imagen[0], (48, 48))
 
             # Obtener el rectángulo de la flecha
             flecha_rect = flecha_redimensionada.get_rect()
             flecha_rect.center = self.flecha_posicion
 
             # Dibujar el rectángulo de la flecha
-            pygame.draw.rect(self.screen, (255, 0, 0), self.rectangulo_flecha, 2)
+            # pygame.draw.rect(self.screen, (255, 0, 0), self.rectangulo_flecha, 2)
 
 
             self.screen.blit(flecha_redimensionada, self.flecha_posicion)

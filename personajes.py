@@ -13,10 +13,11 @@ class Personajes:
         self.personaje_actual = 0
         self.plataformas = Plataformas()
         self.puntos = 0
-        self.vidas = 1
-        self.resistencia = 4
+        self.vidas = 3
+        self.resistencia = 3
         self.inmunidad = False  
         self.inicio_inmunidad = 0
+        self.contador_salto = 0
         self.cambio_personaje_realizado = False
         self.velocidad_movimiento = 10
         self.movimiento_derecha = False
@@ -36,6 +37,7 @@ class Personajes:
         self.gravedad = 1.5
         self.velocidad_animacion = 0.2
         self.frame_actual = 0
+        self.max_saltos = 0
         self.velocidad_vertical = 0
         self.velocidad_horizontal = 0
         self.piso_x = 100  
@@ -75,6 +77,7 @@ class Personajes:
             self.en_suelo = False
             self.altura_inicial = self.posicion_y
             self.velocidad_vertical = -self.velocidad_salto
+            self.contador_salto += 1
 
         if not self.en_suelo:
             self.velocidad_vertical += self.gravedad
@@ -86,6 +89,7 @@ class Personajes:
                     self.posicion_y = plataforma_actual.top - self.personaje_rect.height
                     self.velocidad_vertical = 0
                     self.en_suelo = True
+                    self.contador_salto = 0  # Reiniciar el contador de saltos
                 elif self.velocidad_vertical < 0 and self.posicion_y <= plataforma_actual.bottom:
                     self.posicion_y = plataforma_actual.bottom
                     self.velocidad_vertical = self.gravedad  # Aplicar gravedad si el personaje supera la plataforma
@@ -93,17 +97,42 @@ class Personajes:
                     self.posicion_y = plataforma_actual.top - self.personaje_rect.height
                     self.velocidad_vertical = 0
                     self.en_suelo = True
-                elif self.velocidad_vertical > 0 and plataforma_actual.top is not None and self.posicion_y <= plataforma_actual.top:
+                    self.contador_salto = 0  # Reiniciar el contador de saltos
+                elif self.velocidad_vertical > 0 and plataforma_actual.top is not None:
                     self.velocidad_vertical = self.gravedad
 
-            # Actualizar la posición vertical del personaje
-            self.posicion_y += self.velocidad_vertical
+                # Verificar colisión en posición x con el top de la plataforma
+                if self.posicion_x <= plataforma_actual.right and self.posicion_x >= plataforma_actual.left:
+                    if self.posicion_y >= plataforma_actual.top - self.personaje_rect.height:
+                        self.posicion_y += self.velocidad_vertical
+                        self.velocidad_vertical += self.gravedad
+                    else:
+                        # El personaje ha superado la plataforma, caer
+                        self.posicion_y += self.velocidad_vertical
+                        self.velocidad_vertical += self.gravedad
+                        self.en_suelo = False
+                else:
+                    # El personaje ha superado la plataforma en el eje x, caer
+                    self.en_suelo = False
 
-            # Verificar si el personaje ha caído al suelo
-            if self.posicion_y >= self.piso_y:
-                self.posicion_y = self.piso_y
-                self.en_suelo = True
-                self.velocidad_vertical = 0
+            else:
+                # Actualizar la posición vertical del personaje
+                self.posicion_y += self.velocidad_vertical
+
+                # Verificar si el personaje ha caído al suelo
+                if self.posicion_y >= self.piso_y:
+                    self.posicion_y = self.piso_y
+                    self.en_suelo = True
+                    self.velocidad_vertical = 0
+                    self.contador_salto = 0
+
+
+
+
+
+
+
+
 
     def dibujar_personaje(self):
 
@@ -189,7 +218,6 @@ class Personajes:
 
     def cambiar_personaje(self):
         self.personaje_actual = (self.personaje_actual + 1) % len(self.characters)
-        self.resistencia = 4
         self.cambio_personaje_realizado = True  # Marcar el cambio de personaje como realizado
 
 
@@ -205,7 +233,7 @@ class Personajes:
     def actualizar_vidas(self):
         if self.resistencia <= 0:
             self.vidas -= 1
-            self.resistencia = 4
+            self.resistencia = 3
 
     def actualizar_resistencia(self):
         if self.resistencia < 0:

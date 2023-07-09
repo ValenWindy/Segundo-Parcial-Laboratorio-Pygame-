@@ -2,6 +2,7 @@ import pygame
 import sys
 import time
 import random
+import csv
 from pygame.locals import *
 from options import Options
 from texto import Texto 
@@ -9,10 +10,11 @@ from personajes import Personajes
 from monedas import Monedas
 from plataformas import Plataformas
 from level_2 import Nivel_2
+from marcadores import Marcadores
 
 
 class Nivel_1:
-    def __init__(self):
+    def __init__(self, nombre_jugador):
         self.nivel = 1
         self.options = Options()
         self.personajes = Personajes()
@@ -30,20 +32,20 @@ class Nivel_1:
         self.duracion_nivel = self.texto.duracion_nivel
         pygame.mixer.music.load("Music/Main Theme.wav")
         pygame.mixer.music.play(-1)
-        
+        self.nombre_jugador = nombre_jugador  
+    
+
 
     def caer_monedas(self):
         if random.random() < 0.01:  
             nueva_moneda = Monedas()  
             self.monedas.append(nueva_moneda)  
 
-        # Hacer que las monedas caigan
         for moneda in self.monedas:
             x, y = moneda.posicion_actual()
             y += self.velocidad_caida_monedas
             moneda.posicion = (x, y)
 
-            # Eliminar las monedas que hayan alcanzado el límite inferior de la pantalla
             if y > self.SCREEN_HEIGHT:
                 self.monedas.remove(moneda)
 
@@ -87,20 +89,41 @@ class Nivel_1:
                 self.screen.blit(self.fondo, (0, 0))
 
     def mostrar_mensaje_final(self, puntos):
-        score = self.personajes.calcular_puntos(puntos)
-        mensaje = f"Nivel {self.nivel} completado. Total de puntos: {score}"
+        score_nivel = self.personajes.calcular_puntos(puntos)
+        puntaje_total = score_nivel  
+        mensaje_nivel = f"Nivel {self.nivel} completado."
+        mensaje_puntos = f"Total de puntos del nivel: {score_nivel}"
+        mensaje_score = f"Puntaje total: {puntaje_total}"
+        
         fuente = pygame.font.Font(None, 36)
-        texto = fuente.render(mensaje, True, (255, 255, 255))
-        texto_rect = texto.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2))
-
+        texto_nivel = fuente.render(mensaje_nivel, True, (255, 255, 255))
+        texto_puntos = fuente.render(mensaje_puntos, True, (255, 255, 255))
+        texto_score = fuente.render(mensaje_score, True, (255, 255, 255))
+        
+        texto_nivel_rect = texto_nivel.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2 - 50))
+        texto_puntos_rect = texto_puntos.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2))
+        texto_score_rect = texto_score.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2 + 50))
+        
         self.screen.blit(self.fondo, (0, 0))
-        self.screen.blit(texto, texto_rect)
+        self.screen.blit(texto_nivel, texto_nivel_rect)
+        self.screen.blit(texto_puntos, texto_puntos_rect)
+        self.screen.blit(texto_score, texto_score_rect)
+        
         pygame.display.update()
         self.texto.animacion_inicio_finalizado = True
         time.sleep(3)
 
-        nivel_2 = Nivel_2()
+        marcadores = Marcadores()
+        ranking = marcadores.obtener_calificacion(puntaje_total)
+        marcadores.actualizar_puntaje_csv(puntaje_total, ranking, self.nombre_jugador)
+
+        
+        nivel_2 = Nivel_2(self.nombre_jugador, puntaje_total)
         nivel_2.run()
+
+
+
+
         
 
 
@@ -118,14 +141,14 @@ class Nivel_1:
                 tiempo_restante = self.duracion_nivel - (time.time() - self.texto.tiempo_inicial)
                 if tiempo_restante <= 0:
                     self.mostrar_mensaje_final(self.personajes.puntos)
-                    self.animacion_inicio_finalizado = True  # Actualizar animacion_inicio_finalizado         
+                    self.animacion_inicio_finalizado = True           
                     break
 
             else:
                 tiempo_actual = time.time()
                 tiempo_transcurrido = tiempo_actual - self.texto.animacion_inicio_inicial
                 if tiempo_transcurrido >= self.texto.animacion_inicio_tiempo:
-                    self.texto.animacion_inicio_finalizado = True  # Actualizar animacion_inicio_finalizado
+                    self.texto.animacion_inicio_finalizado = True  
                 self.screen.blit(self.texto.texto_inicio, self.texto.texto_inicio_rect)
 
             pygame.display.update()

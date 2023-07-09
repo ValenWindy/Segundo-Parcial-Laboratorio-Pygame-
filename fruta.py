@@ -15,7 +15,7 @@ class Frutas:
         self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
 
         self.tiempo_anterior = time.time()
-        self.intervalo = 5  # Intervalo de tiempo en segundos
+        self.intervalo = 20  # Intervalo de tiempo en segundos
 
     def cargar_imagenes(self):
         self.imagenes.append((pygame.image.load("Frutas/Apple.png"), "Manzana"))

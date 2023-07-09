@@ -1,4 +1,6 @@
 import pygame
+import csv
+import random
 from pygame import mixer
 from level_1 import Nivel_1
 from level_2 import Nivel_2
@@ -8,6 +10,7 @@ from level_4 import Nivel_4
 class SeleccionarNiveles:
     volumen = 0.5  # Valor predeterminado del volumen
     volumen_guardado = volumen  # Variable para almacenar el volumen actual
+
     def __init__(self):
         pygame.init()
         self.width = 800
@@ -19,19 +22,21 @@ class SeleccionarNiveles:
         self.font_size = 36
         self.font = pygame.font.Font(self.font_path, self.font_size)
         self.regresar_a_menu = False
-        
 
         # Inicializar la música
         pygame.mixer.init()
-        mixer.music.load ("Music/Main Theme.wav") 
-        mixer.music.play(-1) 
+        mixer.music.load("Music/Main Theme.wav")
+        mixer.music.play(-1)
+        self.screen.blit(self.background, (0, 0))
+        titulo = self.font.render("The Huntress and The SoulHunter", True, (255, 255, 255))
+        self.screen.blit(titulo, (self.width // 2 - titulo.get_width() // 2, 50))
+        pygame.display.flip()
 
     def volver_menu_principal(self):
         self.regresar_a_menu = True
-        print("Volviendo al menú principal") # Volver a reproducir la música al regresar al menú principal
+        print("Volviendo al menú principal")  # Volver a reproducir la música al regresar al menú principal
 
-
-    def mostrar_niveles(self):
+    def seleccionar_niveles(self):
         niveles = ["Nivel 1", "Nivel 2", "Nivel 3", "Nivel 4", "Volver al Menú Principal"]
         nivel_seleccionado = 0
 
@@ -54,21 +59,26 @@ class SeleccionarNiveles:
                         else:
                             nivel = niveles[nivel_seleccionado]
                             print("Seleccionaste", nivel)
-                            if nivel == "Nivel 1":
-                                nivel_1 = Nivel_1()  # Crear una instancia de la clase Nivel_1
-                                nivel_1.run()
-                            if nivel == "Nivel 2":
-                                nivel_2 = Nivel_2()  # Crear una instancia de la clase Nivel_1
-                                nivel_2.run()
-                            if nivel == "Nivel 3":
-                                nivel_3 = Nivel_3()  # Crear una instancia de la clase Nivel_1
-                                nivel_3.run()
-                            if nivel == "Nivel 4":
-                                nivel_4 = Nivel_4()  # Crear una instancia de la clase Nivel_1
-                                nivel_4.run()
-                            
-                            
-                            # Lógica para cargar el nivel seleccionado
+                            if nivel != "Volver al Menú Principal":
+                                nombre_jugador = f"Jugador {random.randint(1, 1000)}"
+                                puntaje_total = 0
+
+                                with open('puntajes.csv', 'a', newline='') as file:
+                                    writer = csv.writer(file)
+                                    writer.writerow([nombre_jugador, puntaje_total, ""])
+
+                                if nivel == "Nivel 1":
+                                    nivel_1 = Nivel_1(nombre_jugador)
+                                    nivel_1.run()
+                                elif nivel == "Nivel 2":
+                                    nivel_2 = Nivel_2(nombre_jugador, puntaje_total)
+                                    nivel_2.run()
+                                elif nivel == "Nivel 3":
+                                    nivel_3 = Nivel_3(nombre_jugador, puntaje_total)
+                                    nivel_3.run()
+                                elif nivel == "Nivel 4":
+                                    nivel_4 = Nivel_4(nombre_jugador, puntaje_total)
+                                    nivel_4.run()
 
             self.screen.blit(self.background, (0, 0))
             titulo = self.font.render("Seleccionar Nivel", True, (255, 255, 255))
@@ -81,6 +91,5 @@ class SeleccionarNiveles:
                 y = self.height // 2 - len(niveles) * texto_nivel.get_height() // 2 + i * texto_nivel.get_height()
                 self.screen.blit(texto_nivel, (x, y))
             pygame.display.flip()
+
         return self.regresar_a_menu
-    pygame.quit()
-        

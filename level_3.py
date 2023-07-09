@@ -2,7 +2,8 @@ import pygame
 import sys
 import time
 import random
-
+import csv
+import os
 from pygame.locals import *
 from options import Options
 from texto import Texto 
@@ -13,11 +14,12 @@ from enemigos import Enemigos
 from trampas import Trampas
 from fruta import Frutas
 from level_4 import Nivel_4
+from marcadores import Marcadores
 
 
 
 class Nivel_3:
-    def __init__(self):
+    def __init__(self, nombre_jugador, puntaje_total):
         self.nivel = 3
         self.options = Options()
         self.personajes = Personajes()
@@ -42,6 +44,9 @@ class Nivel_3:
         pygame.mixer.music.play(-1)
         self.tiempo_creacion_enemigo = 10.0
         self.ultimo_tiempo_creacion_enemigo = time.time()
+        self.nombre_jugador = nombre_jugador
+        self.puntaje_total = puntaje_total
+
         
 
     def crear_enemigo_periodico(self):
@@ -61,13 +66,11 @@ class Nivel_3:
             nueva_moneda = Monedas()  
             self.monedas.append(nueva_moneda)  
 
-        # Hacer que las monedas caigan
         for moneda in self.monedas:
             x, y = moneda.posicion_actual()
             y += self.velocidad_caida_monedas
             moneda.posicion = (x, y)
 
-            # Eliminar las monedas que hayan alcanzado el límite inferior de la pantalla
             if y > self.SCREEN_HEIGHT:
                 self.monedas.remove(moneda)
 
@@ -115,7 +118,7 @@ class Nivel_3:
         for enemigo in self.enemigos.lista_enemigos_suelo:
             enemigo_rect = enemigo.enemigo_rect
             
-            # Colisión con el personaje
+            
             if personaje_rect.colliderect(enemigo_rect):
                 if self.golpes == 0:
                     self.personajes.recibir_golpe()
@@ -123,18 +126,17 @@ class Nivel_3:
                     self.personajes.actualizar_resistencia()
                     self.texto.dibujar_puntaje(self.personajes.puntos, self.personajes.vidas, self.personajes.resistencia)
                     self.golpes += 1
-                    self.personajes.inmunidad = True  # Establecer inmunidad
-                    self.personajes.inicio_inmunidad = pygame.time.get_ticks()  # Registrar tiempo de inicio de inmunidad
+                    self.personajes.inmunidad = True  
+                    self.personajes.inicio_inmunidad = pygame.time.get_ticks()  
                 elif self.golpes > 0 and not self.personajes.inmunidad:
                     self.personajes.recibir_golpe()
                     self.personajes.actualizar_vidas()
                     self.personajes.actualizar_resistencia()
                     self.texto.dibujar_puntaje(self.personajes.puntos, self.personajes.vidas, self.personajes.resistencia)
                     self.golpes += 1
-                    self.personajes.inmunidad = True  # Establecer inmunidad
-                    self.personajes.inicio_inmunidad = pygame.time.get_ticks()  # Registrar tiempo de inicio de inmunidad
+                    self.personajes.inmunidad = True  
+                    self.personajes.inicio_inmunidad = pygame.time.get_ticks()  
             
-            # Colisión con los ojos rojos
         for trampa in self.trampas.lista_trampas_rojas:
             trampa_rect = trampa['surface']
                 
@@ -145,18 +147,18 @@ class Nivel_3:
                     self.personajes.actualizar_resistencia()
                     self.texto.dibujar_puntaje(self.personajes.puntos, self.personajes.vidas, self.personajes.resistencia)
                     self.golpes += 1
-                    self.personajes.inmunidad = True  # Establecer inmunidad
-                    self.personajes.inicio_inmunidad = pygame.time.get_ticks()  # Registrar tiempo de inicio de inmunidad
+                    self.personajes.inmunidad = True  
+                    self.personajes.inicio_inmunidad = pygame.time.get_ticks()  
             elif self.golpes > 0 and not self.personajes.inmunidad:
                     self.personajes.recibir_golpe()
                     self.personajes.actualizar_vidas()
                     self.personajes.actualizar_resistencia()
                     self.texto.dibujar_puntaje(self.personajes.puntos, self.personajes.vidas, self.personajes.resistencia)
                     self.golpes += 1
-                    self.personajes.inmunidad = True  # Establecer inmunidad
-                    self.personajes.inicio_inmunidad = pygame.time.get_ticks()  # Registrar tiempo de inicio de inmunidad
-                        
-            # Colisión con los ojos azules
+                    self.personajes.inmunidad = True  
+                    self.personajes.inicio_inmunidad = pygame.time.get_ticks()  
+                    
+
         for trampa in self.trampas.lista_trampas_azules:
             trampa_rect = trampa['surface']
                 
@@ -167,27 +169,27 @@ class Nivel_3:
                     self.personajes.actualizar_resistencia()
                     self.texto.dibujar_puntaje(self.personajes.puntos, self.personajes.vidas, self.personajes.resistencia)
                     self.golpes += 1
-                    self.personajes.inmunidad = True  # Establecer inmunidad
-                    self.personajes.inicio_inmunidad = pygame.time.get_ticks()  # Registrar tiempo de inicio de inmunidad
+                    self.personajes.inmunidad = True  
+                    self.personajes.inicio_inmunidad = pygame.time.get_ticks()  
                 elif self.golpes > 0 and not self.personajes.inmunidad:
                     self.personajes.recibir_golpe()
                     self.personajes.actualizar_vidas()
                     self.personajes.actualizar_resistencia()
                     self.texto.dibujar_puntaje(self.personajes.puntos, self.personajes.vidas, self.personajes.resistencia)
                     self.golpes += 1
-                    self.personajes.inmunidad = True  # Establecer inmunidad
-                    self.personajes.inicio_inmunidad = pygame.time.get_ticks()  # Registrar tiempo de inicio de inmunidad
+                    self.personajes.inmunidad = True 
+                    self.personajes.inicio_inmunidad = pygame.time.get_ticks()  
 
 
     def colision_ataque(self):
-        if self.personajes.personaje_actual == 1:  # Solo para el personaje 2
+        if self.personajes.personaje_actual == 1:  
             if self.personajes.ataque:
-                for enemigo in self.enemigos.lista_enemigos:
+                for enemigo in self.enemigos.lista_enemigos_suelo:
                     if self.personajes.rectangulo_ataque_personaje_2.colliderect(enemigo.enemigo_rect):
-                        self.enemigos.lista_enemigos.remove(enemigo)
+                        self.enemigos.lista_enemigos_suelo.remove(enemigo)
                         self.personajes.puntos += enemigo.valor
                         break
-        elif self.personajes.personaje_actual == 0:  # Solo para el personaje 1
+        elif self.personajes.personaje_actual == 0:  
             if self.personajes.ataque and self.personajes.flecha_posicion:
                 for enemigo in self.enemigos.lista_enemigos_suelo:
                     if self.personajes.rectangulo_flecha.colliderect(enemigo.enemigo_rect):
@@ -210,16 +212,11 @@ class Nivel_3:
         self.texto.dibujar_puntaje(self.personajes.puntos, self.personajes.vidas, self.personajes.resistencia)
         self.texto.dibujar_tiempo_restante()
 
-
         # pygame.draw.rect(self.screen, (255, 0, 0), self.plataformas.plataforma_grande_derecha_rect)
         # pygame.draw.rect(self.screen, (255, 0, 0), self.plataformas.plataforma_grande_izquierda_rect)
 
         if self.personajes.inmunidad:
-            pygame.draw.rect(self.screen, (255, 255, 0), self.personajes.personaje_rect, 2)  # Dibujar rectángulo amarillo para indicar inmunidad
-        else:
-            pass
-            # pygame.draw.rect(self.screen, (0, 255, 0), self.personajes.personaje_rect, 2)  # Dibujar rectángulo verde normalmente
-
+            pygame.draw.rect(self.screen, (255, 255, 0), self.personajes.personaje_rect, 2)  
         pygame.display.flip()
     
     
@@ -230,28 +227,48 @@ class Nivel_3:
             if self.texto.tiempo_transcurrido >= 3.0:
                 self.screen.blit(self.fondo, (0, 0))
 
-        # Verificar si la inmunidad ha expirado
+
         if self.personajes.inmunidad:
             tiempo_actual = pygame.time.get_ticks()
-            duracion_inmunidad = 5 * 1000  # Duración de la inmunidad en milisegundos (2 segundos en este ejemplo)
+            duracion_inmunidad = 5 * 1000  
             if tiempo_actual - self.personajes.inicio_inmunidad >= duracion_inmunidad:
-                self.personajes.inmunidad = False  # Desactivar inmunidad
+                self.personajes.inmunidad = False  
 
 
     def mostrar_mensaje_final(self, puntos):
-        score = self.personajes.calcular_puntos(puntos)
-        mensaje = f"Nivel {self.nivel} completado. Total de puntos: {score}"
+        score_nivel = self.personajes.calcular_puntos(puntos)
+        puntaje_total = self.puntaje_total + score_nivel  # Suma el puntaje anterior con el puntaje del nivel actual
+        mensaje_nivel = f"Nivel {self.nivel} completado."
+        mensaje_puntos = f"Total de puntos del nivel: {score_nivel}"
+        mensaje_score = f"Puntaje total: {puntaje_total}"
+        
         fuente = pygame.font.Font(None, 36)
-        texto = fuente.render(mensaje, True, (255, 255, 255))
-        texto_rect = texto.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2))
-
+        texto_nivel = fuente.render(mensaje_nivel, True, (255, 255, 255))
+        texto_puntos = fuente.render(mensaje_puntos, True, (255, 255, 255))
+        texto_score = fuente.render(mensaje_score, True, (255, 255, 255))
+        
+        texto_nivel_rect = texto_nivel.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2 - 50))
+        texto_puntos_rect = texto_puntos.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2))
+        texto_score_rect = texto_score.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2 + 50))
+        
         self.screen.blit(self.fondo, (0, 0))
-        self.screen.blit(texto, texto_rect)
+        self.screen.blit(texto_nivel, texto_nivel_rect)
+        self.screen.blit(texto_puntos, texto_puntos_rect)
+        self.screen.blit(texto_score, texto_score_rect)
+        
         pygame.display.update()
         self.texto.animacion_inicio_finalizado = True
         time.sleep(3)
-        nivel_4 = Nivel_4()
+
+        marcadores = Marcadores()
+        ranking = marcadores.obtener_calificacion(puntaje_total)
+        marcadores.actualizar_puntaje_csv(puntaje_total, ranking, self.nombre_jugador)
+
+        
+        
+        nivel_4 = Nivel_4(self.nombre_jugador, puntaje_total)
         nivel_4.run()
+
 
 
     def game_over(self):
@@ -259,12 +276,25 @@ class Nivel_3:
         fuente = pygame.font.Font(None, 36)
         texto = fuente.render(mensaje, True, (255, 255, 255))
         texto_rect = texto.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2))
+        mensaje_gracias = "Gracias por jugar."
+        fuente_gracias = pygame.font.Font(None, 24)
+        texto_gracias = fuente_gracias.render(mensaje_gracias, True, (255, 255, 255))
+        texto_gracias_rect = texto_gracias.get_rect(bottomleft=(10, self.SCREEN_HEIGHT - 10))
 
         self.screen.blit(self.fondo, (0, 0))
         self.screen.blit(texto, texto_rect)
+        self.screen.blit(texto_gracias, texto_gracias_rect)
         pygame.display.update()
         self.animacion_inicio_finalizado = True
         time.sleep(3)
+
+        marcadores = Marcadores()
+        ranking = marcadores.obtener_calificacion(self.personajes.puntos)
+        marcadores.actualizar_puntaje_csv(self.personajes.puntos, ranking, self.nombre_jugador)
+
+    
+
+
 
 
 
@@ -286,22 +316,20 @@ class Nivel_3:
                 tiempo_restante = self.duracion_nivel - (time.time() - self.texto.tiempo_inicial)
                 if tiempo_restante <= 0:
                     self.mostrar_mensaje_final(self.personajes.puntos)
-                    self.animacion_inicio_finalizado = True  # Actualizar animacion_inicio_finalizado         
+                    self.animacion_inicio_finalizado = True         
                     break
 
                 if self.personajes.vidas <= 0:
                     self.game_over()
-                    self.animacion_inicio_finalizado = True  # Actualizar animacion_inicio_finalizado         
+                    self.animacion_inicio_finalizado = True     
                     break
 
             else:
                 tiempo_actual = time.time()
                 tiempo_transcurrido = tiempo_actual - self.texto.animacion_inicio_inicial
                 if tiempo_transcurrido >= self.texto.animacion_inicio_tiempo:
-                    self.texto.animacion_inicio_finalizado = True  # Actualizar animacion_inicio_finalizado
+                    self.texto.animacion_inicio_finalizado = True  
                 self.screen.blit(self.texto.texto_inicio, self.texto.texto_inicio_rect)
 
             pygame.display.update()
             self.clock.tick(self.FPS)
-
-            
