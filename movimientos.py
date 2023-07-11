@@ -71,5 +71,7 @@ animaciones_personaje_2 = {
         pygame.image.load("Soulhunter/Idle_3.png"),
         pygame.image.load("Soulhunter/Idle_4.png")
     ],  
-    
+    'flecha': [
+        pygame.image.load("Huntress/Arrow_Static.png")
+    ],
 }

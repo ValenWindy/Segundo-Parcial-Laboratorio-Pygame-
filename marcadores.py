@@ -84,7 +84,11 @@ class Marcadores:
             writer.writerows(data)
 
     def cargar_marcadores(self):
-        with open("puntajes.csv", newline='', encoding='utf-8') as archivo:
+        file_path = 'puntajes.csv'
+        if not os.path.isfile(file_path):
+            raise FileNotFoundError("El archivo puntajes.csv no se encontró.")
+
+        with open(file_path, newline='', encoding='utf-8') as archivo:
             lector_csv = csv.reader(archivo)
             next(lector_csv)  # Omitir la primera fila
             self.marcadores = []
@@ -99,11 +103,12 @@ class Marcadores:
 
             return self.marcadores
 
-
-            
-
     def mostrar_marcadores(self):
-        marcadores = self.cargar_marcadores()
+        try:
+            marcadores = self.cargar_marcadores()
+        except FileNotFoundError:
+            print("El archivo puntajes.csv no se encontró.")
+            return [], self.regresar_a_menu
 
         marcadores_ordenados = sorted(marcadores, key=lambda x: x['Puntaje'], reverse=True)
 
@@ -117,9 +122,17 @@ class Marcadores:
         surface.blit(titulo, titulo_rect)
 
         fuente_encabezados = pygame.font.Font(None, 28)
-        encabezados = fuente_encabezados.render("Nombre     Puntaje     Ranking", True, (255, 255, 255))
-        encabezados_rect = encabezados.get_rect(midtop=(self.width // 2, 180))
-        surface.blit(encabezados, encabezados_rect)
+        encabezados_nombre = fuente_encabezados.render("Nombre", True, (255, 255, 255))
+        encabezados_puntaje = fuente_encabezados.render("Puntaje", True, (255, 255, 255))
+        encabezados_ranking = fuente_encabezados.render("Ranking", True, (255, 255, 255))
+        
+        encabezados_nombre_rect = encabezados_nombre.get_rect(midtop=(self.width // 2 - 100, 180))
+        encabezados_puntaje_rect = encabezados_puntaje.get_rect(midtop=(self.width // 2, 180))
+        encabezados_ranking_rect = encabezados_ranking.get_rect(midtop=(self.width // 2 + 100, 180))
+        
+        surface.blit(encabezados_nombre, encabezados_nombre_rect)
+        surface.blit(encabezados_puntaje, encabezados_puntaje_rect)
+        surface.blit(encabezados_ranking, encabezados_ranking_rect)
 
         fuente_marcador = pygame.font.Font(None, 28)
         y = 220
@@ -127,16 +140,23 @@ class Marcadores:
             nombre = marcador['Nombre']
             puntaje = marcador['Puntaje']
             ranking = marcador['Ranking']
-            texto_marcador = fuente_marcador.render(f"{nombre}    {puntaje}    {ranking}", True, (255, 255, 255))
-            texto_marcador_rect = texto_marcador.get_rect(midtop=(self.width // 2, y))
-            surface.blit(texto_marcador, texto_marcador_rect)
+            
+            texto_nombre = fuente_marcador.render(nombre, True, (255, 255, 255))
+            texto_nombre_rect = texto_nombre.get_rect(midtop=(self.width // 2 - 100, y))
+            surface.blit(texto_nombre, texto_nombre_rect)
+            
+            texto_puntaje = fuente_marcador.render(str(puntaje), True, (255, 255, 255))
+            texto_puntaje_rect = texto_puntaje.get_rect(midtop=(self.width // 2, y))
+            surface.blit(texto_puntaje, texto_puntaje_rect)
+            
+            texto_ranking = fuente_marcador.render(ranking, True, (255, 255, 255))
+            texto_ranking_rect = texto_ranking.get_rect(midtop=(self.width // 2 + 100, y))
+            surface.blit(texto_ranking, texto_ranking_rect)
+            
             y += 30
 
         self.screen.blit(surface, (0, 0))
         pygame.display.update()
-
-        # # Esperar 5 segundos
-        # time.sleep(5)
 
         # Volver al menú principal
         self.regresar_a_menu = True

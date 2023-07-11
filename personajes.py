@@ -13,8 +13,8 @@ class Personajes:
         self.personaje_actual = 0
         self.plataformas = Plataformas()
         self.puntos = 0
-        self.vidas = 3
-        self.resistencia = 3
+        self.vidas = 1
+        self.resistencia = 4
         self.inmunidad = False  
         self.inicio_inmunidad = 0
         self.contador_salto = 0

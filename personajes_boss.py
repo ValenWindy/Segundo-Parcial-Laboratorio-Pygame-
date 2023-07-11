@@ -12,8 +12,8 @@ class Personajes:
         self.characters = [animaciones_personaje_1, animaciones_personaje_2]
         self.personaje_actual = 0
         self.puntos = 0
-        self.vidas = 3
-        self.resistencia = 3
+        self.vidas = 1
+        self.resistencia = 4
         self.inmunidad = False  
         self.inmunidad_invisible = False
         self.inicio_inmunidad = 0

@@ -175,9 +175,9 @@ class Nivel_4:
         mensaje_score = f"Puntaje total: {puntaje_total}"
         mensaje_gracias = "Gracias por jugar."
 
-        fuente_gracias = pygame.font.Font(None, 48)
+        fuente_gracias = pygame.font.Font(None, 36)
         texto_gracias = fuente_gracias.render(mensaje_gracias, True, (255, 255, 255))
-        texto_gracias_rect = texto_gracias.get_rect(bottomleft=(10, self.SCREEN_HEIGHT - 10))
+        texto_gracias_rect = texto_gracias.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT - 30))
         
         fuente = pygame.font.Font(None, 36)
         texto_nivel = fuente.render(mensaje_nivel, True, (255, 255, 255))
@@ -211,9 +211,9 @@ class Nivel_4:
         texto = fuente.render(mensaje, True, (255, 255, 255))
         texto_rect = texto.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2))
         mensaje_gracias = "Gracias por jugar."
-        fuente_gracias = pygame.font.Font(None, 24)
+        fuente_gracias = pygame.font.Font(None, 36)
         texto_gracias = fuente_gracias.render(mensaje_gracias, True, (255, 255, 255))
-        texto_gracias_rect = texto_gracias.get_rect(bottomleft=(10, self.SCREEN_HEIGHT - 10))
+        texto_gracias_rect = texto_gracias.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT - 30))
 
         self.screen.blit(self.fondo, (0, 0))
         self.screen.blit(texto, texto_rect)
