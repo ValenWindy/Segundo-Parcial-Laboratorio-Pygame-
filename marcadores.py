@@ -111,6 +111,7 @@ class Marcadores:
             return [], self.regresar_a_menu
 
         marcadores_ordenados = sorted(marcadores, key=lambda x: x['Puntaje'], reverse=True)
+        marcadores_ordenados = marcadores_ordenados[:10]
 
         # Crear una superficie de pantalla para dibujar la tabla de marcadores
         surface = pygame.Surface((self.width, self.height))
