@@ -28,6 +28,12 @@ class Menu:
         mixer.music.load("Music/Main Theme.wav")
         mixer.music.play(-1)
 
+    def pausar_musica(self):
+        mixer.music.pause()
+
+    def reanudar_musica(self):
+        mixer.music.unpause()
+
     def volver_menu_principal(self):
         self.regresar_a_menu = True
         print("Volviendo al menú principal")
@@ -71,6 +77,7 @@ class Menu:
             pygame.display.flip()
 
     def iniciar_juego(self):
+        
         print("Iniciando juego...")
         nombre_jugador = self.ingresar_nombre_jugador()
         if nombre_jugador:
@@ -84,10 +91,9 @@ class Menu:
                     writer.writerow(["Nombre", "Puntaje", "Ranking"])
 
                 writer.writerow([nombre_jugador, 0, ""])
-
+            self.pausar_musica()
             nivel_1 = Nivel_1(nombre_jugador)  # Crea el objeto Nivel_1 con el nombre del jugador
             nivel_1.run()
-
 
     def mostrar_opciones(self):
         opciones = Options()

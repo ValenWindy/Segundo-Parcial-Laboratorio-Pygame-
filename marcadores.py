@@ -40,9 +40,9 @@ class Marcadores:
                         break
 
     def obtener_calificacion(self, puntaje):
-        if puntaje <= 15000:
+        if puntaje <= 10000:
             return "Rookie"
-        elif puntaje <= 25000:
+        elif puntaje <= 20000:
             return "Average"
         else:
             return "Pro"

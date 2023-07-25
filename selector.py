@@ -67,6 +67,9 @@ class SeleccionarNiveles:
                                     writer = csv.writer(file)
                                     writer.writerow([nombre_jugador, puntaje_total, ""])
 
+                                # Detener la música del tema principal
+                                pygame.mixer.music.stop()
+
                                 if nivel == "Nivel 1":
                                     nivel_1 = Nivel_1(nombre_jugador)
                                     nivel_1.run()
@@ -93,3 +96,4 @@ class SeleccionarNiveles:
             pygame.display.flip()
 
         return self.regresar_a_menu
+

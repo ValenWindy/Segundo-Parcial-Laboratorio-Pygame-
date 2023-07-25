@@ -2,6 +2,7 @@ import pygame
 import sys
 import time
 import random
+import keyboard
 import csv
 import os
 from pygame.locals import *
@@ -40,14 +41,16 @@ class Nivel_3:
         self.titulo = pygame.display.set_caption("The Huntress and the Soulhunter")
         self.duracion_nivel = self.texto.duracion_nivel     
         self.enemigos.crear_enemigo_suelo()     
-        pygame.mixer.music.load("Music/Main Theme.wav")
+        pygame.mixer.music.load("Music/Level_3.wav")
         pygame.mixer.music.play(-1)
         self.tiempo_creacion_enemigo = 10.0
         self.ultimo_tiempo_creacion_enemigo = time.time()
         self.nombre_jugador = nombre_jugador
         self.puntaje_total = puntaje_total
+        self.huntress_hit = False
+        self.soulhunter_hit = False
 
-        
+
 
     def crear_enemigo_periodico(self):
         tiempo_actual = time.time()
@@ -89,13 +92,15 @@ class Nivel_3:
 
     def colision_monedas(self):
         personaje_rect = self.personajes.personaje_rect
-        
+
         for moneda in self.monedas:
             moneda_rect = pygame.Rect(moneda.posicion_actual(), moneda.imagen_actual[0].get_size())
             if personaje_rect.colliderect(moneda_rect):
+                moneda.sound_coin.play()
                 self.personajes.puntos += moneda.imagen_actual[2]
                 print(self.personajes.puntos)
                 self.monedas.remove(moneda)
+
 
     def colision_frutas(self):
         personaje_rect = self.personajes.personaje_rect
@@ -105,8 +110,10 @@ class Nivel_3:
             if personaje_rect.colliderect(fruta_rect):
                 tipo_fruta = fruta["tipo"]
                 if tipo_fruta == "Banana":
+                    self.frutas.sound_banana.play()
                     self.personajes.resistencia += 1
                 elif tipo_fruta == "Manzana":
+                    self.frutas.sound_apple.play()
                     self.personajes.vidas += 1
                 self.frutas.lista_frutas.remove(fruta)
                 break
@@ -114,49 +121,76 @@ class Nivel_3:
 
     def colision_enemigos(self):
         personaje_rect = self.personajes.personaje_rect
-        
+
         for enemigo in self.enemigos.lista_enemigos_suelo:
             enemigo_rect = enemigo.enemigo_rect
-            
-            
+
             if personaje_rect.colliderect(enemigo_rect):
                 if self.golpes == 0:
+                    if self.personajes.personaje_actual == 0:  # Huntress
+                        self.huntress_hit = True
+                        self.personajes.sound_huntress_hit.play()
+                    elif self.personajes.personaje_actual == 1:  # Soulhunter
+                        self.soulhunter_hit = True
+                        self.personajes.sound_soulhunter_hit.play()
+
                     self.personajes.recibir_golpe()
                     self.personajes.actualizar_vidas()
                     self.personajes.actualizar_resistencia()
                     self.texto.dibujar_puntaje(self.personajes.puntos, self.personajes.vidas, self.personajes.resistencia)
                     self.golpes += 1
-                    self.personajes.inmunidad = True  
-                    self.personajes.inicio_inmunidad = pygame.time.get_ticks()  
+                    self.personajes.inmunidad = True
+                    self.personajes.inicio_inmunidad = pygame.time.get_ticks()
                 elif self.golpes > 0 and not self.personajes.inmunidad:
+                    if self.personajes.personaje_actual == 0:  
+                        self.huntress_hit = True
+                        self.personajes.sound_huntress_hit.play()
+                    elif self.personajes.personaje_actual == 1:  
+                        self.soulhunter_hit = True
+                        self.personajes.sound_soulhunter_hit.play()
+
                     self.personajes.recibir_golpe()
                     self.personajes.actualizar_vidas()
                     self.personajes.actualizar_resistencia()
                     self.texto.dibujar_puntaje(self.personajes.puntos, self.personajes.vidas, self.personajes.resistencia)
                     self.golpes += 1
-                    self.personajes.inmunidad = True  
-                    self.personajes.inicio_inmunidad = pygame.time.get_ticks()  
+                    self.personajes.inmunidad = True
+                    self.personajes.inicio_inmunidad = pygame.time.get_ticks()
             
         for trampa in self.trampas.lista_trampas_rojas:
             trampa_rect = trampa['surface']
                 
             if personaje_rect.colliderect(trampa_rect):
                 if self.golpes == 0:
+                    if self.personajes.personaje_actual == 0:  # Huntress
+                        self.huntress_hit = True
+                        self.personajes.sound_huntress_hit.play()
+                    elif self.personajes.personaje_actual == 1:  # Soulhunter
+                        self.soulhunter_hit = True
+                        self.personajes.sound_soulhunter_hit.play()
+
                     self.personajes.recibir_golpe()
                     self.personajes.actualizar_vidas()
                     self.personajes.actualizar_resistencia()
                     self.texto.dibujar_puntaje(self.personajes.puntos, self.personajes.vidas, self.personajes.resistencia)
                     self.golpes += 1
-                    self.personajes.inmunidad = True  
-                    self.personajes.inicio_inmunidad = pygame.time.get_ticks()  
-            elif self.golpes > 0 and not self.personajes.inmunidad:
+                    self.personajes.inmunidad = True
+                    self.personajes.inicio_inmunidad = pygame.time.get_ticks()
+                elif self.golpes > 0 and not self.personajes.inmunidad:
+                    if self.personajes.personaje_actual == 0:  
+                        self.huntress_hit = True
+                        self.personajes.sound_huntress_hit.play()
+                    elif self.personajes.personaje_actual == 1:  
+                        self.soulhunter_hit = True
+                        self.personajes.sound_soulhunter_hit.play()
+
                     self.personajes.recibir_golpe()
                     self.personajes.actualizar_vidas()
                     self.personajes.actualizar_resistencia()
                     self.texto.dibujar_puntaje(self.personajes.puntos, self.personajes.vidas, self.personajes.resistencia)
                     self.golpes += 1
-                    self.personajes.inmunidad = True  
-                    self.personajes.inicio_inmunidad = pygame.time.get_ticks()  
+                    self.personajes.inmunidad = True
+                    self.personajes.inicio_inmunidad = pygame.time.get_ticks()
                     
 
         for trampa in self.trampas.lista_trampas_azules:
@@ -164,21 +198,35 @@ class Nivel_3:
                 
             if personaje_rect.colliderect(trampa_rect):
                 if self.golpes == 0:
+                    if self.personajes.personaje_actual == 0:  # Huntress
+                        self.huntress_hit = True
+                        self.personajes.sound_huntress_hit.play()
+                    elif self.personajes.personaje_actual == 1:  # Soulhunter
+                        self.soulhunter_hit = True
+                        self.personajes.sound_soulhunter_hit.play()
+
                     self.personajes.recibir_golpe()
                     self.personajes.actualizar_vidas()
                     self.personajes.actualizar_resistencia()
                     self.texto.dibujar_puntaje(self.personajes.puntos, self.personajes.vidas, self.personajes.resistencia)
                     self.golpes += 1
-                    self.personajes.inmunidad = True  
-                    self.personajes.inicio_inmunidad = pygame.time.get_ticks()  
+                    self.personajes.inmunidad = True
+                    self.personajes.inicio_inmunidad = pygame.time.get_ticks()
                 elif self.golpes > 0 and not self.personajes.inmunidad:
+                    if self.personajes.personaje_actual == 0:  
+                        self.huntress_hit = True
+                        self.personajes.sound_huntress_hit.play()
+                    elif self.personajes.personaje_actual == 1:  
+                        self.soulhunter_hit = True
+                        self.personajes.sound_soulhunter_hit.play()
+
                     self.personajes.recibir_golpe()
                     self.personajes.actualizar_vidas()
                     self.personajes.actualizar_resistencia()
                     self.texto.dibujar_puntaje(self.personajes.puntos, self.personajes.vidas, self.personajes.resistencia)
                     self.golpes += 1
-                    self.personajes.inmunidad = True 
-                    self.personajes.inicio_inmunidad = pygame.time.get_ticks()  
+                    self.personajes.inmunidad = True
+                    self.personajes.inicio_inmunidad = pygame.time.get_ticks()
 
 
     def colision_ataque(self):
@@ -186,18 +234,79 @@ class Nivel_3:
             if self.personajes.ataque:
                 for enemigo in self.enemigos.lista_enemigos_suelo:
                     if self.personajes.rectangulo_ataque_personaje_2.colliderect(enemigo.enemigo_rect):
+                        self.enemigos.sound_death.play()
                         self.enemigos.lista_enemigos_suelo.remove(enemigo)
                         self.personajes.puntos += enemigo.valor
                         break
         elif self.personajes.personaje_actual == 0:  
             if self.personajes.ataque and self.personajes.flecha_posicion:
+                self.rectangulo_punto = pygame.Rect(self.personajes.flecha_posicion, (1, 1))
                 for enemigo in self.enemigos.lista_enemigos_suelo:
-                    if self.personajes.rectangulo_flecha.colliderect(enemigo.enemigo_rect):
+                    if self.rectangulo_punto.colliderect(enemigo.enemigo_rect):
+                        self.enemigos.sound_death.play()
                         self.enemigos.lista_enemigos_suelo.remove(enemigo)
                         self.personajes.puntos += enemigo.valor
                         self.personajes.flecha_posicion = None
                         break
 
+    def eventos(self):
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == KEYDOWN:
+                if event.key == K_RIGHT:
+                    self.personajes.movimiento_derecha = True
+                    self.personajes.direccion_personaje = "derecha"
+                    self.personajes.velocidad_horizontal = self.personajes.velocidad_movimiento
+                elif event.key == K_LEFT:
+                    self.personajes.movimiento_izquierda = True
+                    self.personajes.direccion_personaje = "izquierda"
+                    self.personajes.velocidad_horizontal = -self.personajes.velocidad_movimiento
+                elif event.key == K_SPACE:
+                    self.personajes.saltar = True
+                    self.personajes.sound_jump.play()
+                elif event.key == K_a:
+                    self.personajes.ataque = True
+                    if self.personajes.personaje_actual == 0:
+                        self.personajes.sound_huntress_attack.play()
+                    elif self.personajes.personaje_actual == 1:
+                        self.personajes.sound_soulhunter_attack.play()
+                elif event.key == K_c:
+                    self.personajes.cambiar_personaje()
+                elif event.key == pygame.K_ESCAPE:
+                    self.pausar()  # Activar la pausa cuando se presione la tecla Escape
+            elif event.type == KEYUP:
+                if event.key == K_RIGHT:
+                    self.personajes.movimiento_derecha = False
+                    self.personajes.velocidad_horizontal = 0
+                elif event.key == K_LEFT:
+                    self.personajes.movimiento_izquierda = False
+                    self.personajes.velocidad_horizontal = 0
+                elif event.key == K_SPACE:
+                    self.personajes.saltar = False
+                elif event.key == K_a:
+                    self.personajes.ataque = False
+
+    def pausar(self):
+        self.pausa = True  
+
+        while self.pausa:
+            pygame.event.get()
+            clock = pygame.time.Clock()
+            fuente = pygame.font.Font(None, 36)
+            mensaje_pausa = fuente.render("PAUSA", True, (255, 255, 255))
+            mensaje_pausa_rect = mensaje_pausa.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2))
+            mensaje_continuar = fuente.render("Presione Enter para continuar", True, (255, 255, 255))
+            mensaje_continuar_rect = mensaje_continuar.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2 + 50))
+
+            self.screen.blit(mensaje_pausa, mensaje_pausa_rect)
+            self.screen.blit(mensaje_continuar, mensaje_continuar_rect)
+            pygame.display.update()
+            clock.tick(60)
+
+            if keyboard.is_pressed('enter'): 
+                self.pausa = False  
 
 
     def dibujar_elementos(self):
@@ -241,20 +350,24 @@ class Nivel_3:
         mensaje_nivel = f"Nivel {self.nivel} completado."
         mensaje_puntos = f"Total de puntos del nivel: {score_nivel}"
         mensaje_score = f"Puntaje total: {puntaje_total}"
+        mensaje_lore = "Han llegado y deben pelear contra el gran destructor: Palez"
         
         fuente = pygame.font.Font(None, 36)
         texto_nivel = fuente.render(mensaje_nivel, True, (255, 255, 255))
         texto_puntos = fuente.render(mensaje_puntos, True, (255, 255, 255))
         texto_score = fuente.render(mensaje_score, True, (255, 255, 255))
+        texto_lore = fuente.render(mensaje_lore, True, (255, 255, 255))
         
         texto_nivel_rect = texto_nivel.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2 - 50))
         texto_puntos_rect = texto_puntos.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2))
-        texto_score_rect = texto_score.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2 + 50))
+        texto_score_rect = texto_score.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2 + 30))
+        texto_lore_rect = texto_lore.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2 + 60))
         
         self.screen.blit(self.fondo, (0, 0))
         self.screen.blit(texto_nivel, texto_nivel_rect)
         self.screen.blit(texto_puntos, texto_puntos_rect)
         self.screen.blit(texto_score, texto_score_rect)
+        self.screen.blit(texto_lore, texto_lore_rect)
         
         pygame.display.update()
         self.texto.animacion_inicio_finalizado = True
@@ -264,8 +377,6 @@ class Nivel_3:
         ranking = marcadores.obtener_calificacion(puntaje_total)
         marcadores.actualizar_puntaje_csv(puntaje_total, ranking, self.nombre_jugador)
 
-        
-        
         nivel_4 = Nivel_4(self.nombre_jugador, puntaje_total)
         nivel_4.run()
 
@@ -300,7 +411,7 @@ class Nivel_3:
 
     def run(self):
         while True:
-            self.personajes.eventos()
+            self.eventos()
             self.actualizar_tiempo_transcurrido()
 
             if self.texto.animacion_inicio_finalizado:

@@ -1,6 +1,7 @@
 import pygame
 import sys
 import time
+import keyboard
 import threading
 from pygame.locals import *
 from movimientos import animaciones_personaje_1, animaciones_personaje_2
@@ -44,11 +45,18 @@ class Personajes:
         self.piso_y = self.SCREEN_HEIGHT - 100 
         self.plataforma_piso_rect = pygame.Rect(0, self.piso_y, self.posicion_x, 20)
         self.rectangulo_ataque_personaje_2 = pygame.Rect(0, 0, 100, 50)
-        self.rectangulo_flecha = pygame.Rect(0, 0, 100, 100)
+        self.rectangulo_flecha = pygame.Rect(100, 100, 200, 100)  
+        self.punto = (150, 150) 
+        self.rectangulo_punto = pygame.Rect(self.punto, (1, 1))
         self.flecha_posicion = None
         self.en_suelo = True
         self.sound_huntress_attack = pygame.mixer.Sound("Music/Arrow.wav")
         self.sound_soulhunter_attack = pygame.mixer.Sound("Music/Sword.wav")
+        self.sound_huntress_hit = pygame.mixer.Sound("Music/Huntress-Hit.WAV")
+        self.sound_soulhunter_hit = pygame.mixer.Sound("Music/Soulhunter-Hit.wav")
+        self.sound_jump = pygame.mixer.Sound("Music/Jump.mp3")
+
+        pygame.font.init()
 
         self.personaje_rect = pygame.Rect(
             self.posicion_x,
@@ -127,13 +135,6 @@ class Personajes:
                     self.contador_salto = 0
 
 
-
-
-
-
-
-
-
     def dibujar_personaje(self):
 
         accion_actual = 'quieto'
@@ -158,15 +159,10 @@ class Personajes:
         imagen_redimensionada = pygame.transform.scale(imagen_actual, (100, 100))
         self.screen.blit(imagen_redimensionada, (self.posicion_x, self.posicion_y))
         self.rectangulo_flecha.x += self.velocidad_movimiento * 2
-        self.dibujar_flecha()
         self.actualizar_flecha()
+        self.dibujar_flecha()
 
-
-        # Dibujar rectángulo del personaje
-        # pygame.draw.rect(self.screen, (0, 255, 0), self.personaje_rect, 2)
-
-        if self.ataque and self.personaje_actual == 1:  # Solo aplicar para el Personaje 2
-            # Establecer la posición del rectángulo de ataque según la dirección del personaje
+        if self.ataque and self.personaje_actual == 1: 
             if self.direccion_personaje == "derecha":
                 self.rectangulo_ataque_personaje_2.left = self.personaje_rect.right
             else:
@@ -174,51 +170,15 @@ class Personajes:
 
             self.rectangulo_ataque_personaje_2.centery = self.personaje_rect.centery
 
-            # Dibujar el rectángulo de ataque
-            # pygame.draw.rect(self.screen, (255, 0, 0), self.rectangulo_ataque_personaje_2)
-
-        # Actualizar el rectángulo del personaje
         self.personaje_rect = pygame.Rect(self.posicion_x, self.posicion_y, 100, 100)
 
-    def eventos(self):
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                sys.exit()
-            elif event.type == KEYDOWN:
-                if event.key == K_RIGHT:
-                    self.movimiento_derecha = True
-                    self.direccion_personaje = "derecha"
-                    self.velocidad_horizontal = self.velocidad_movimiento
-                elif event.key == K_LEFT:
-                    self.movimiento_izquierda = True
-                    self.direccion_personaje = "izquierda"
-                    self.velocidad_horizontal = -self.velocidad_movimiento
-                elif event.key == K_SPACE:
-                    self.saltar = True
-                elif event.key == K_a:
-                    self.ataque = True
-                    if self.personaje_actual == 0:
-                        self.sound_huntress_attack.play()
-                    elif self.personaje_actual == 1:
-                        self.sound_soulhunter_attack.play()
-                elif event.key == K_c:
-                    self.cambiar_personaje()
-            elif event.type == KEYUP:
-                if event.key == K_RIGHT:
-                    self.movimiento_derecha = False
-                    self.velocidad_horizontal = 0
-                elif event.key == K_LEFT:
-                    self.movimiento_izquierda = False
-                    self.velocidad_horizontal = 0
-                elif event.key == K_SPACE:
-                    self.saltar = False
-                elif event.key == K_a:
-                    self.ataque = False
+    
+
+            
 
     def cambiar_personaje(self):
         self.personaje_actual = (self.personaje_actual + 1) % len(self.characters)
-        self.cambio_personaje_realizado = True  # Marcar el cambio de personaje como realizado
+        self.cambio_personaje_realizado = True 
 
 
     def obtener_imagen_personaje_actual(self):
@@ -242,21 +202,21 @@ class Personajes:
 
     def actualizar_flecha(self):
         if self.ataque and not self.flecha_posicion and self.personaje_actual == 0:
-            self.flecha_posicion = list(self.personaje_rect.center)  # Inicializar la posición de la flecha
+            self.flecha_posicion = list(self.personaje_rect.center) 
 
         if self.flecha_posicion:
-            x, y = self.flecha_posicion  # Obtener las coordenadas x e y de self.flecha_posicion
+            x, y = self.flecha_posicion  
             self.rectangulo_flecha.center = self.flecha_posicion
 
             if self.direccion_personaje == "derecha":
-                x += self.velocidad_movimiento * 2  # Mover la flecha hacia la derecha
+                x += self.velocidad_movimiento * 2 
             else:
-                x -= self.velocidad_movimiento * 2  # Mover la flecha hacia la izquierda
+                x -= self.velocidad_movimiento * 2 
 
-            self.flecha_posicion = [x, y]  # Actualizar la posición de la flecha
+            self.flecha_posicion = [x, y]  
 
             if self.flecha_posicion[0] > self.SCREEN_WIDTH or self.flecha_posicion[0] < 0:
-                self.flecha_posicion = None  # Si la flecha sale de la pantalla, reiniciar su posición
+                self.flecha_posicion = None  
             
 
 

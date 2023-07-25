@@ -7,10 +7,10 @@ class Trampas:
     def __init__(self):
         self.ojo_rojo = ojo_rojo
         self.ojo_azul = ojo_azul
-        self.velocidad = 3
+        self.velocidad = 7
         self.indice_animacion = 0
         self.direccion = -1
-        self.tamano_rectangulo = (72, 72)
+        self.tamano_rectangulo = (60, 60)
         self.SCREEN_WIDTH = 800
         self.SCREEN_HEIGHT = 600
         self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))

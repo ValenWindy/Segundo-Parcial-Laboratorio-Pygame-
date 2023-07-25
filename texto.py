@@ -22,10 +22,11 @@ class Texto:
         self.animacion_inicio_finalizado = False
         self.puntaje = 0
         self.tiempo_inicial = time.time()
-        self.duracion_nivel = 63
+        self.duracion_nivel = 33
         self.tiempo_transcurrido = 0
         self.animacion_inicio_inicial = time.time()
         self.personajes = Personajes()
+        
     
     
 
@@ -36,7 +37,7 @@ class Texto:
         return f"{minutos:02d}:{segundos:02d}"
 
     def dibujar_puntaje(self, puntos, vidas, resistencia):
-        font = pygame.font.Font(None, 24)
+        font = pygame.font.Font(None, 36)
         texto_puntaje = font.render("Puntaje: " + str(puntos), True, (255, 255, 255))
         texto_vidas = font.render("Vidas: " + str(vidas), True, (255, 255, 255))
         texto_resistencia = font.render("Resistencia: " + str(resistencia), True, (255, 255, 255))
@@ -48,7 +49,7 @@ class Texto:
 
 
     def dibujar_tiempo_restante(self):
-        font = pygame.font.Font(None, 24)
+        font = pygame.font.Font(None, 30)
         tiempo_restante = self.duracion_nivel - (time.time() - self.tiempo_inicial)
         tiempo_restante_str = self.formato_tiempo(tiempo_restante)
         texto_tiempo_restante = font.render("Tiempo restante: " + tiempo_restante_str, True, (255, 255, 255))

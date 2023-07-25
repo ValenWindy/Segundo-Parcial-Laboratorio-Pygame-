@@ -1,6 +1,7 @@
 import random
 import pygame
 import time
+from pygame.locals import *
 from plataformas import Plataformas
 
 class Frutas:
@@ -13,9 +14,10 @@ class Frutas:
         self.SCREEN_WIDTH = 800
         self.SCREEN_HEIGHT = 600
         self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
-
+        self.sound_banana = pygame.mixer.Sound("Music/Banana.wav")
+        self.sound_apple = pygame.mixer.Sound("Music/Apple.wav")
         self.tiempo_anterior = time.time()
-        self.intervalo = 20  # Intervalo de tiempo en segundos
+        self.intervalo = 15  # Intervalo de tiempo en segundos
 
     def cargar_imagenes(self):
         self.imagenes.append((pygame.image.load("Frutas/Apple.png"), "Manzana"))

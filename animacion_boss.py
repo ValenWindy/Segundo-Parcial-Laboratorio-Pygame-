@@ -23,19 +23,4 @@ animacion_jefe = {
         pygame.image.load("Undead executioner/Attack_11.png"),
         pygame.image.load("Undead executioner/Attack_12.png")
     ],
-
-    'habilidad' : [
-        pygame.image.load("Undead executioner/Skill_0.png"),
-        pygame.image.load("Undead executioner/Skill_1.png"),
-        pygame.image.load("Undead executioner/Skill_2.png"),
-        pygame.image.load("Undead executioner/Skill_3.png"),
-        pygame.image.load("Undead executioner/Skill_4.png"),
-        pygame.image.load("Undead executioner/Skill_5.png"),
-        pygame.image.load("Undead executioner/Skill_6.png"),
-        pygame.image.load("Undead executioner/Skill_7.png"),
-        pygame.image.load("Undead executioner/Skill_8.png"),
-        pygame.image.load("Undead executioner/Skill_9.png"),
-        pygame.image.load("Undead executioner/Skill_10.png"),
-        pygame.image.load("Undead executioner/Skill_11.png")
-    ]
 }

@@ -30,33 +30,80 @@ class Nivel_4:
         self.fondo = pygame.image.load("Backgrounds/Level_4.jpg").convert()
         self.titulo = pygame.display.set_caption("The Huntress and the Soulhunter")
         self.duracion_nivel = self.texto.duracion_nivel   
-        pygame.mixer.music.load("Music/Main Theme.wav")
+        pygame.mixer.music.load("Music/Level_4.wav")
         pygame.mixer.music.play(-1)
         self.nombre_jugador = nombre_jugador
         self.puntaje_total = puntaje_total
+        self.huntress_hit = False
+        self.soulhunter_hit = False
         
     
     def colision_jefe(self):
         personaje_rect = self.personajes.personaje_rect
         jefe_rect = self.jefe.jefe_rect
+        proyectil_rect = self.jefe.proyectil_rect
             
         if personaje_rect.colliderect(jefe_rect):
-            if self.golpes == 0:
-                self.personajes.recibir_golpe()
-                self.personajes.actualizar_vidas()
-                self.personajes.actualizar_resistencia()
-                self.texto.dibujar_puntaje(self.personajes.puntos, self.personajes.vidas, self.personajes.resistencia)
-                self.golpes += 1
-                self.personajes.inmunidad = True  
-                self.personajes.inicio_inmunidad = pygame.time.get_ticks()  
-            elif self.golpes > 0 and not self.personajes.inmunidad:
-                self.personajes.recibir_golpe()
-                self.personajes.actualizar_vidas()
-                self.personajes.actualizar_resistencia()
-                self.texto.dibujar_puntaje(self.personajes.puntos, self.personajes.vidas, self.personajes.resistencia)
-                self.golpes += 1
-                self.personajes.inmunidad = True  
-                self.personajes.inicio_inmunidad = pygame.time.get_ticks()  
+                if self.golpes == 0:
+                    if self.personajes.personaje_actual == 0:  # Huntress
+                        self.huntress_hit = True
+                        self.personajes.sound_huntress_hit.play()
+                    elif self.personajes.personaje_actual == 1:  # Soulhunter
+                        self.soulhunter_hit = True
+                        self.personajes.sound_soulhunter_hit.play()
+
+                    self.personajes.recibir_golpe()
+                    self.personajes.actualizar_vidas()
+                    self.personajes.actualizar_resistencia()
+                    self.texto.dibujar_puntaje(self.personajes.puntos, self.personajes.vidas, self.personajes.resistencia)
+                    self.golpes += 1
+                    self.personajes.inmunidad = True
+                    self.personajes.inicio_inmunidad = pygame.time.get_ticks()
+                elif self.golpes > 0 and not self.personajes.inmunidad:
+                    if self.personajes.personaje_actual == 0:  
+                        self.huntress_hit = True
+                        self.personajes.sound_huntress_hit.play()
+                    elif self.personajes.personaje_actual == 1:  
+                        self.soulhunter_hit = True
+                        self.personajes.sound_soulhunter_hit.play()
+                    self.personajes.recibir_golpe()
+                    self.personajes.actualizar_vidas()
+                    self.personajes.actualizar_resistencia()
+                    self.texto.dibujar_puntaje(self.personajes.puntos, self.personajes.vidas, self.personajes.resistencia)
+                    self.golpes += 1
+                    self.personajes.inmunidad = True
+                    self.personajes.inicio_inmunidad = pygame.time.get_ticks()
+
+        if personaje_rect.colliderect(proyectil_rect):
+                if self.golpes == 0:
+                    if self.personajes.personaje_actual == 0:  # Huntress
+                        self.huntress_hit = True
+                        self.personajes.sound_huntress_hit.play()
+                    elif self.personajes.personaje_actual == 1:  # Soulhunter
+                        self.soulhunter_hit = True
+                        self.personajes.sound_soulhunter_hit.play()
+
+                    self.personajes.recibir_golpe()
+                    self.personajes.actualizar_vidas()
+                    self.personajes.actualizar_resistencia()
+                    self.texto.dibujar_puntaje(self.personajes.puntos, self.personajes.vidas, self.personajes.resistencia)
+                    self.golpes += 1
+                    self.personajes.inmunidad = True
+                    self.personajes.inicio_inmunidad = pygame.time.get_ticks()
+                elif self.golpes > 0 and not self.personajes.inmunidad:
+                    if self.personajes.personaje_actual == 0:  
+                        self.huntress_hit = True
+                        self.personajes.sound_huntress_hit.play()
+                    elif self.personajes.personaje_actual == 1:  
+                        self.soulhunter_hit = True
+                        self.personajes.sound_soulhunter_hit.play()
+                    self.personajes.recibir_golpe()
+                    self.personajes.actualizar_vidas()
+                    self.personajes.actualizar_resistencia()
+                    self.texto.dibujar_puntaje(self.personajes.puntos, self.personajes.vidas, self.personajes.resistencia)
+                    self.golpes += 1
+                    self.personajes.inmunidad = True
+                    self.personajes.inicio_inmunidad = pygame.time.get_ticks()
 
     def colision_ataque(self):
         jefe_rect = self.jefe.jefe_rect
@@ -89,8 +136,9 @@ class Nivel_4:
 
             elif self.personajes.personaje_actual == 0:  
                 if self.personajes.flecha_posicion:
+                    self.rectangulo_punto = pygame.Rect(self.personajes.flecha_posicion, (1, 1))
                     if self.golpes == 0:
-                        if self.personajes.rectangulo_flecha.colliderect(jefe_rect):
+                        if self.rectangulo_punto.colliderect(jefe_rect):
                             self.jefe.recibir_golpe_enemigo()
                             self.jefe.actualizar_resistencia_enemigo()
                             self.dibujar_texto_enemigo(self.jefe.resistencia)
@@ -116,16 +164,75 @@ class Nivel_4:
 
     def dibujar_texto_enemigo(self, resistencia):
 
-        fuente_jefe = pygame.font.Font(None, 24)
-        texto_jefe = fuente_jefe.render("Jefe:", True, (255, 255, 255))
+        fuente_jefe = pygame.font.Font(None, 30)
+        texto_jefe = fuente_jefe.render("Palez:", True, (255, 255, 255))
         texto_jefe_rect = texto_jefe.get_rect(bottomright=(self.SCREEN_WIDTH - 40, self.SCREEN_HEIGHT - 10))
         self.screen.blit(texto_jefe, texto_jefe_rect)
 
 
-        fuente_resistencia = pygame.font.Font(None, 24)
+        fuente_resistencia = pygame.font.Font(None, 30)
         texto_resistencia = fuente_resistencia.render(str(self.jefe.resistencia), True, (255, 255, 255))
         texto_resistencia_rect = texto_resistencia.get_rect(bottomleft=(texto_jefe_rect.right + 5, texto_jefe_rect.bottom))
         self.screen.blit(texto_resistencia, texto_resistencia_rect)
+    
+    def eventos(self):
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == KEYDOWN:
+                if event.key == K_RIGHT:
+                    self.personajes.movimiento_derecha = True
+                    self.personajes.direccion_personaje = "derecha"
+                    self.personajes.velocidad_horizontal = self.personajes.velocidad_movimiento
+                elif event.key == K_LEFT:
+                    self.personajes.movimiento_izquierda = True
+                    self.personajes.direccion_personaje = "izquierda"
+                    self.personajes.velocidad_horizontal = -self.personajes.velocidad_movimiento
+                elif event.key == K_SPACE:
+                    self.personajes.saltar = True
+                    self.personajes.sound_jump.play()
+                elif event.key == K_a:
+                    self.personajes.ataque = True
+                    if self.personajes.personaje_actual == 0:
+                        self.personajes.sound_huntress_attack.play()
+                    elif self.personajes.personaje_actual == 1:
+                        self.personajes.sound_soulhunter_attack.play()
+                elif event.key == K_c:
+                    self.personajes.cambiar_personaje()
+                elif event.key == pygame.K_ESCAPE:
+                    self.pausar()  
+            elif event.type == KEYUP:
+                if event.key == K_RIGHT:
+                    self.personajes.movimiento_derecha = False
+                    self.personajes.velocidad_horizontal = 0
+                elif event.key == K_LEFT:
+                    self.personajes.movimiento_izquierda = False
+                    self.personajes.velocidad_horizontal = 0
+                elif event.key == K_SPACE:
+                    self.personajes.saltar = False
+                elif event.key == K_a:
+                    self.personajes.ataque = False
+
+    def pausar(self):
+        self.pausa = True  
+
+        while self.pausa:
+            pygame.event.get()
+            clock = pygame.time.Clock()
+            fuente = pygame.font.Font(None, 36)
+            mensaje_pausa = fuente.render("PAUSA", True, (255, 255, 255))
+            mensaje_pausa_rect = mensaje_pausa.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2))
+            mensaje_continuar = fuente.render("Presione Enter para continuar", True, (255, 255, 255))
+            mensaje_continuar_rect = mensaje_continuar.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2 + 50))
+
+            self.screen.blit(mensaje_pausa, mensaje_pausa_rect)
+            self.screen.blit(mensaje_continuar, mensaje_continuar_rect)
+            pygame.display.update()
+            clock.tick(60)
+
+            if keyboard.is_pressed('enter'): 
+                self.pausa = False  
 
 
     def dibujar_elementos(self):
@@ -231,7 +338,7 @@ class Nivel_4:
     
     def run(self):
         while True:
-            self.personajes.eventos()
+            self.eventos()
             self.actualizar_tiempo_transcurrido()
 
             if self.texto.animacion_inicio_finalizado:

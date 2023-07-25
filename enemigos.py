@@ -1,5 +1,6 @@
 import pygame
 import random
+from pygame.locals import *
 from movimientos_enemigos import animacion_enemigo
 from plataformas import Plataformas
 
@@ -12,7 +13,7 @@ class Enemigos:
         self.posicion_y_inicial = self.SCREEN_HEIGHT - 100
         self.posicion_x = self.posicion_x_inicial
         self.posicion_y = self.posicion_y_inicial
-        self.velocidad = 4
+        self.velocidad = 6
         self.valor = 250
         self.animacion_moverse = animacion_enemigo['moverse']
         self.indice_animacion = 0
@@ -25,6 +26,7 @@ class Enemigos:
         self.plataformas = Plataformas()
         self.enemigo_rect = pygame.Rect(self.posicion_x, self.posicion_y, *self.tamano_rectangulo)
         self.lista_enemigos_suelo = []  # Lista de enemigos
+        self.sound_death = pygame.mixer.Sound ("Music/Zombie_Death.WAV")
 
     def crear_enemigo_suelo(self):
         nuevo_enemigo = Enemigos()
