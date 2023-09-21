@@ -16,6 +16,7 @@ from trampas import Trampas
 from fruta import Frutas
 from level_4 import Nivel_4
 from marcadores import Marcadores
+from lluvia_fuego import Lluvia
 
 
 
@@ -29,6 +30,7 @@ class Nivel_3:
         self.texto = Texto(self.nivel, self.personajes)
         self.enemigos = Enemigos()
         self.trampas = Trampas()
+        self.lluvia = Lluvia ()
         self.velocidad_caida_monedas = 2
         self.monedas = []
         self.golpes = 0
@@ -49,6 +51,11 @@ class Nivel_3:
         self.puntaje_total = puntaje_total
         self.huntress_hit = False
         self.soulhunter_hit = False
+        self.pausa = False
+        self.game_over_state = False
+        for _ in range(5):  # Generar 10 fuegos iniciales
+            self.lluvia.crear_fuego()
+
 
 
 
@@ -126,6 +133,41 @@ class Nivel_3:
             enemigo_rect = enemigo.enemigo_rect
 
             if personaje_rect.colliderect(enemigo_rect):
+                if self.golpes == 0:
+                    if self.personajes.personaje_actual == 0:  # Huntress
+                        self.huntress_hit = True
+                        self.personajes.sound_huntress_hit.play()
+                    elif self.personajes.personaje_actual == 1:  # Soulhunter
+                        self.soulhunter_hit = True
+                        self.personajes.sound_soulhunter_hit.play()
+
+                    self.personajes.recibir_golpe()
+                    self.personajes.actualizar_vidas()
+                    self.personajes.actualizar_resistencia()
+                    self.texto.dibujar_puntaje(self.personajes.puntos, self.personajes.vidas, self.personajes.resistencia)
+                    self.golpes += 1
+                    self.personajes.inmunidad = True
+                    self.personajes.inicio_inmunidad = pygame.time.get_ticks()
+                elif self.golpes > 0 and not self.personajes.inmunidad:
+                    if self.personajes.personaje_actual == 0:  
+                        self.huntress_hit = True
+                        self.personajes.sound_huntress_hit.play()
+                    elif self.personajes.personaje_actual == 1:  
+                        self.soulhunter_hit = True
+                        self.personajes.sound_soulhunter_hit.play()
+
+                    self.personajes.recibir_golpe()
+                    self.personajes.actualizar_vidas()
+                    self.personajes.actualizar_resistencia()
+                    self.texto.dibujar_puntaje(self.personajes.puntos, self.personajes.vidas, self.personajes.resistencia)
+                    self.golpes += 1
+                    self.personajes.inmunidad = True
+                    self.personajes.inicio_inmunidad = pygame.time.get_ticks()
+
+        for fuego in self.lluvia.lista_fuegos:
+            fuego_rect = fuego["rect"]
+
+            if personaje_rect.colliderect(fuego_rect):
                 if self.golpes == 0:
                     if self.personajes.personaje_actual == 0:  # Huntress
                         self.huntress_hit = True
@@ -274,8 +316,13 @@ class Nivel_3:
                         self.personajes.sound_soulhunter_attack.play()
                 elif event.key == K_c:
                     self.personajes.cambiar_personaje()
-                elif event.key == pygame.K_ESCAPE:
-                    self.pausar()  # Activar la pausa cuando se presione la tecla Escape
+                elif event.key == pygame.K_ESCAPE:  # Tecla Q para activar el Game Over en pausa
+                    self.pausar ()
+                elif event.key == pygame.K_q:  # Tecla Q para activar el Game Over
+                    if self.pausa:
+                        self.game_over()
+                        self.texto.animacion_inicio_finalizado = True
+                        break
             elif event.type == KEYUP:
                 if event.key == K_RIGHT:
                     self.personajes.movimiento_derecha = False
@@ -289,7 +336,7 @@ class Nivel_3:
                     self.personajes.ataque = False
 
     def pausar(self):
-        self.pausa = True  
+        self.pausa = True  # Activar la pausa
 
         while self.pausa:
             pygame.event.get()
@@ -299,14 +346,21 @@ class Nivel_3:
             mensaje_pausa_rect = mensaje_pausa.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2))
             mensaje_continuar = fuente.render("Presione Enter para continuar", True, (255, 255, 255))
             mensaje_continuar_rect = mensaje_continuar.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2 + 50))
+            mensaje_game_over = fuente.render("Presione Q para Game Over", True, (255, 255, 255))
+            mensaje_game_over_rect = mensaje_game_over.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2 + 100))
 
             self.screen.blit(mensaje_pausa, mensaje_pausa_rect)
             self.screen.blit(mensaje_continuar, mensaje_continuar_rect)
+            self.screen.blit(mensaje_game_over, mensaje_game_over_rect)
             pygame.display.update()
             clock.tick(60)
 
-            if keyboard.is_pressed('enter'): 
-                self.pausa = False  
+            if keyboard.is_pressed('enter'):
+                self.pausa = False
+            elif keyboard.is_pressed('q'):
+                self.game_over_state = True  # Cambiar el nombre de la variable
+                self.pausa = False
+                break 
 
 
     def dibujar_elementos(self):
@@ -316,6 +370,7 @@ class Nivel_3:
         self.trampas.dibujar_trampas()
         self.crear_enemigo_periodico()
         self.dibujar_monedas()
+        self.lluvia.dibujar_fuegos(self.screen)
         self.frutas.dibujar_fruta()
         self.frutas.generar_frutas()  
         self.texto.dibujar_puntaje(self.personajes.puntos, self.personajes.vidas, self.personajes.resistencia)
@@ -418,6 +473,7 @@ class Nivel_3:
                 self.personajes.actualizar_salto()
                 self.caer_monedas()
                 self.colision_monedas()
+                self.lluvia.mover_fuegos()
                 self.colision_frutas()
                 self.colision_enemigos()
                 self.colision_ataque()
@@ -430,11 +486,10 @@ class Nivel_3:
                     self.animacion_inicio_finalizado = True         
                     break
 
-                if self.personajes.vidas <= 0:
+                if self.personajes.vidas <= 0 or self.game_over_state:  # Cambiar el nombre de la variable
                     self.game_over()
-                    self.animacion_inicio_finalizado = True     
+                    self.texto.animacion_inicio_finalizado = True
                     break
-
             else:
                 tiempo_actual = time.time()
                 tiempo_transcurrido = tiempo_actual - self.texto.animacion_inicio_inicial

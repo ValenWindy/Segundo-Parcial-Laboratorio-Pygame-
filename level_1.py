@@ -50,7 +50,9 @@ class Nivel_1:
         self.soulhunter_hit = False
         self.pausa = False
         self.game_over_state = False
+
         
+    
     def crear_enemigo_periodico(self):
         tiempo_actual = time.time()
         if tiempo_actual - self.ultimo_tiempo_creacion_enemigo >= self.tiempo_creacion_enemigo:
@@ -61,8 +63,6 @@ class Nivel_1:
 
         self.enemigos.actualizar_enemigos()
         self.enemigos.dibujar_enemigos()
-
-
 
 
     def caer_monedas(self):
@@ -350,14 +350,13 @@ class Nivel_1:
 
 
     def run(self):
-        while not self.pausa:
+        while True:
             self.eventos()
             self.actualizar_tiempo_transcurrido()
 
             if self.texto.animacion_inicio_finalizado:
                 self.personajes.actualizar_salto()
                 self.caer_monedas()
-                self.crear_enemigo_periodico()
                 self.colision_monedas()
                 self.colision_frutas()
                 self.colision_enemigos()

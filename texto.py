@@ -22,7 +22,7 @@ class Texto:
         self.animacion_inicio_finalizado = False
         self.puntaje = 0
         self.tiempo_inicial = time.time()
-        self.duracion_nivel = 33
+        self.duracion_nivel = 503
         self.tiempo_transcurrido = 0
         self.animacion_inicio_inicial = time.time()
         self.personajes = Personajes()

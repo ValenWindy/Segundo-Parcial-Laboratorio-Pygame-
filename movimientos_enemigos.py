@@ -19,3 +19,16 @@ animacion_enemigo = {
         pygame.image.load("Skeleton enemy/Move_15.png")
     ]
 }
+
+animacion_enemigo_plataforma = {
+    'quieto': [
+        pygame.image.load("Bringer-Of-Death/Individual Sprite/Idle/Bringer-of-Death_Idle_1.png"),
+        pygame.image.load("Bringer-Of-Death/Individual Sprite/Idle/Bringer-of-Death_Idle_2.png"),
+        pygame.image.load("Bringer-Of-Death/Individual Sprite/Idle/Bringer-of-Death_Idle_3.png"),
+        pygame.image.load("Bringer-Of-Death/Individual Sprite/Idle/Bringer-of-Death_Idle_4.png"),
+        pygame.image.load("Bringer-Of-Death/Individual Sprite/Idle/Bringer-of-Death_Idle_5.png"),
+        pygame.image.load("Bringer-Of-Death/Individual Sprite/Idle/Bringer-of-Death_Idle_6.png"),
+        pygame.image.load("Bringer-Of-Death/Individual Sprite/Idle/Bringer-of-Death_Idle_7.png"),
+        pygame.image.load("Bringer-Of-Death/Individual Sprite/Idle/Bringer-of-Death_Idle_8.png")
+    ],
+}

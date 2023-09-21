@@ -8,3 +8,4 @@ fire_ball = {
         pygame.image.load("Tramps/Fire_Ball_3.png")
     ]
 }
+

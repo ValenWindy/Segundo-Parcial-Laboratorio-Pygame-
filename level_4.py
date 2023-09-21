@@ -2,6 +2,7 @@ import pygame
 import sys
 import time
 import random
+import keyboard
 import csv
 import os 
 from pygame.locals import *
@@ -36,6 +37,8 @@ class Nivel_4:
         self.puntaje_total = puntaje_total
         self.huntress_hit = False
         self.soulhunter_hit = False
+        self.pausa = False
+        self.game_over_state = False
         
     
     def colision_jefe(self):
@@ -200,8 +203,13 @@ class Nivel_4:
                         self.personajes.sound_soulhunter_attack.play()
                 elif event.key == K_c:
                     self.personajes.cambiar_personaje()
-                elif event.key == pygame.K_ESCAPE:
-                    self.pausar()  
+                elif event.key == pygame.K_ESCAPE:  # Tecla Q para activar el Game Over en pausa
+                    self.pausar ()
+                elif event.key == pygame.K_q:  # Tecla Q para activar el Game Over
+                    if self.pausa:
+                        self.game_over()
+                        self.texto.animacion_inicio_finalizado = True
+                        break
             elif event.type == KEYUP:
                 if event.key == K_RIGHT:
                     self.personajes.movimiento_derecha = False
@@ -215,7 +223,7 @@ class Nivel_4:
                     self.personajes.ataque = False
 
     def pausar(self):
-        self.pausa = True  
+        self.pausa = True  # Activar la pausa
 
         while self.pausa:
             pygame.event.get()
@@ -225,14 +233,21 @@ class Nivel_4:
             mensaje_pausa_rect = mensaje_pausa.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2))
             mensaje_continuar = fuente.render("Presione Enter para continuar", True, (255, 255, 255))
             mensaje_continuar_rect = mensaje_continuar.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2 + 50))
+            mensaje_game_over = fuente.render("Presione Q para Game Over", True, (255, 255, 255))
+            mensaje_game_over_rect = mensaje_game_over.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2 + 100))
 
             self.screen.blit(mensaje_pausa, mensaje_pausa_rect)
             self.screen.blit(mensaje_continuar, mensaje_continuar_rect)
+            self.screen.blit(mensaje_game_over, mensaje_game_over_rect)
             pygame.display.update()
             clock.tick(60)
 
-            if keyboard.is_pressed('enter'): 
-                self.pausa = False  
+            if keyboard.is_pressed('enter'):
+                self.pausa = False
+            elif keyboard.is_pressed('q'):
+                self.game_over_state = True  # Cambiar el nombre de la variable
+                self.pausa = False
+                break 
 
 
     def dibujar_elementos(self):
@@ -353,9 +368,9 @@ class Nivel_4:
                     self.animacion_inicio_finalizado = True           
                     break
 
-                if self.personajes.vidas <= 0:
+                if self.personajes.vidas <= 0 or self.game_over_state:  # Cambiar el nombre de la variable
                     self.game_over()
-                    self.animacion_inicio_finalizado = True       
+                    self.texto.animacion_inicio_finalizado = True
                     break
 
             else:
