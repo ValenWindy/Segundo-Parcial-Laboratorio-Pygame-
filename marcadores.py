@@ -4,7 +4,7 @@ import os
 import time
 import tabulate
 import pygame_menu
-from pygame import mixer
+
 
 class Marcadores:
     volumen = 0.5  # Valor predeterminado del volumen
@@ -21,10 +21,9 @@ class Marcadores:
         self.font = pygame.font.Font(self.font_path, self.font_size)
         self.regresar_a_menu = False
 
-        # Inicializar la música
-        pygame.mixer.init()
-        mixer.music.load("Music/Main Theme.wav")
-        mixer.music.play(-1)
+
+        # pygame.mixer.music.load("Music/Main Theme.wav")
+        # pygame.mixer.music.play(-1)
 
     def volver_menu_principal(self):
         running = True

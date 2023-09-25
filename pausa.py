@@ -11,22 +11,22 @@ class Pausa:
 
     def pausar_juego(self):
         self.pausa = not self.pausa
-        if self.pausa:
-            self.pausar_musica()
+        # if self.pausa:
+        #     self.pausar_musica()
 
-    def pausar_musica(self):
-        pygame.mixer.music.pause()
+    # def pausar_musica(self):
+    #     pygame.mixer.music.pause()
 
-    def reanudar_musica(self):
-        pygame.mixer.music.unpause()
+    # def reanudar_musica(self):
+    #     pygame.mixer.music.unpause()
 
     def reanudar_juego(self):
         self.pausa = False
-        self.reanudar_musica()
+        # self.reanudar_musica()
 
     def volver_menu_principal(self):
         self.regresar_a_menu = True
-        self.pausar_musica()
+        # self.pausar_musica()
 
     def dibujar_pausa(self):
         fuente = pygame.font.Font("Constantine.ttf", 36)
@@ -43,8 +43,7 @@ class Pausa:
         texto_opciones_rect = texto_opciones.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2 + 50))
         self.screen.blit(texto_opciones, texto_opciones_rect)
 
-        pygame.display.update()  # Actualiza la pantalla antes de obtener eventos
-
+        pygame.display.update()  
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:

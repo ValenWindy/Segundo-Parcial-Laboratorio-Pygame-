@@ -17,10 +17,9 @@ class Options:
         self.font = pygame.font.Font(self.font_path, self.font_size)
         self.regresar_a_menu = False
 
-        # Inicializar la música
-        pygame.mixer.init()
-        mixer.music.load("Music/Main Theme.wav")
-        mixer.music.play(-1) 
+        
+        # pygame.mixer.music.load("Music/Main Theme.wav")
+        # pygame.mixer.music.play(-1) 
 
         # Teclas de jugabilidad
         self.key_mappings = {

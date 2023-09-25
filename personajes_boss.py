@@ -48,11 +48,11 @@ class Personajes:
         self.flecha_posicion = None
         self.regresar_a_menu = False
         self.en_suelo = True
-        self.sound_huntress_attack = pygame.mixer.Sound("Music/Arrow.wav")
-        self.sound_soulhunter_attack = pygame.mixer.Sound("Music/Sword.wav")
-        self.sound_huntress_hit = pygame.mixer.Sound("Music/Huntress-Hit.WAV")
-        self.sound_soulhunter_hit = pygame.mixer.Sound("Music/Soulhunter-Hit.wav")
-        self.sound_jump = pygame.mixer.Sound("Music/Jump.mp3")
+        # self.sound_huntress_attack = pygame.mixer.Sound("Music/Arrow.wav")
+        # self.sound_soulhunter_attack = pygame.mixer.Sound("Music/Sword.wav")
+        # self.sound_huntress_hit = pygame.mixer.Sound("Music/Huntress-Hit.WAV")
+        # self.sound_soulhunter_hit = pygame.mixer.Sound("Music/Soulhunter-Hit.wav")
+        # self.sound_jump = pygame.mixer.Sound("Music/Jump.mp3")
 
 
         self.personaje_rect = pygame.Rect(

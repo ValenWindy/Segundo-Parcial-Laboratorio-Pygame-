@@ -1,7 +1,6 @@
 import pygame
 import csv
 import random
-from pygame import mixer
 from level_1 import Nivel_1
 from level_2 import Nivel_2
 from level_3 import Nivel_3
@@ -23,10 +22,9 @@ class SeleccionarNiveles:
         self.font = pygame.font.Font(self.font_path, self.font_size)
         self.regresar_a_menu = False
 
-        # Inicializar la música
-        pygame.mixer.init()
-        mixer.music.load("Music/Main Theme.wav")
-        mixer.music.play(-1)
+        
+        # pygame.mixer.music.load("Music/Main Theme.wav")
+        # pygame.mixer.music.play(-1)
         self.screen.blit(self.background, (0, 0))
         titulo = self.font.render("The Huntress and The SoulHunter", True, (255, 255, 255))
         self.screen.blit(titulo, (self.width // 2 - titulo.get_width() // 2, 50))
@@ -68,7 +66,7 @@ class SeleccionarNiveles:
                                     writer.writerow([nombre_jugador, puntaje_total, ""])
 
                                 # Detener la música del tema principal
-                                pygame.mixer.music.stop()
+                                # pygame.mixer.music.stop()
 
                                 if nivel == "Nivel 1":
                                     nivel_1 = Nivel_1(nombre_jugador)

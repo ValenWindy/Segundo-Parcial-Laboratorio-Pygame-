@@ -14,8 +14,8 @@ class Frutas:
         self.SCREEN_WIDTH = 800
         self.SCREEN_HEIGHT = 600
         self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
-        self.sound_banana = pygame.mixer.Sound("Music/Banana.wav")
-        self.sound_apple = pygame.mixer.Sound("Music/Apple.wav")
+        # self.sound_banana = pygame.mixer.Sound("Music/Banana.wav")
+        # self.sound_apple = pygame.mixer.Sound("Music/Apple.wav")
         self.tiempo_anterior = time.time()
         self.intervalo = 15  # Intervalo de tiempo en segundos
 

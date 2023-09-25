@@ -23,10 +23,8 @@ class Menu:
         self.font_size = 36
         self.font = pygame.font.Font(self.font_path, self.font_size)
         self.regresar_a_menu = False
-
-        pygame.mixer.init()
-        mixer.music.load("Music/Main Theme.wav")
-        mixer.music.play(-1)
+        # pygame.mixer.music.load("Music/Main Theme.wav")
+        # pygame.mixer.music.play(-1)
 
     def pausar_musica(self):
         mixer.music.pause()

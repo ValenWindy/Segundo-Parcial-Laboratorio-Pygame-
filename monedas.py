@@ -10,7 +10,7 @@ class Monedas:
         self.imagen_actual = self.imagenes[0]
         self.posicion = self.generar_posicion()
         self.tipo = ""
-        self.sound_coin = pygame.mixer.Sound("Music/Coin.wav")
+        # self.sound_coin = pygame.mixer.Sound("Music/Coin.wav")
         
 
     def cargar_imagenes(self):

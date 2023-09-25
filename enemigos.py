@@ -26,7 +26,7 @@ class Enemigos:
         self.plataformas = Plataformas()
         self.enemigo_rect = pygame.Rect(self.posicion_x, self.posicion_y, *self.tamano_rectangulo)
         self.lista_enemigos_suelo = []  
-        self.sound_death = pygame.mixer.Sound ("Music/Zombie_Death.WAV")
+        # self.sound_death = pygame.mixer.Sound ("Music/Zombie_Death.WAV")
 
     def crear_enemigo_suelo(self):
         nuevo_enemigo = Enemigos()

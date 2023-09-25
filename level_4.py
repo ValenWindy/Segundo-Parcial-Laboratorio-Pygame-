@@ -31,8 +31,8 @@ class Nivel_4:
         self.fondo = pygame.image.load("Backgrounds/Level_4.jpg").convert()
         self.titulo = pygame.display.set_caption("The Huntress and the Soulhunter")
         self.duracion_nivel = self.texto.duracion_nivel   
-        pygame.mixer.music.load("Music/Level_4.wav")
-        pygame.mixer.music.play(-1)
+        # pygame.mixer.music.load("Music/Level_4.wav")
+        # pygame.mixer.music.play(-1)
         self.nombre_jugador = nombre_jugador
         self.puntaje_total = puntaje_total
         self.huntress_hit = False
@@ -50,10 +50,10 @@ class Nivel_4:
                 if self.golpes == 0:
                     if self.personajes.personaje_actual == 0:  # Huntress
                         self.huntress_hit = True
-                        self.personajes.sound_huntress_hit.play()
+                        # self.personajes.sound_huntress_hit.play()
                     elif self.personajes.personaje_actual == 1:  # Soulhunter
                         self.soulhunter_hit = True
-                        self.personajes.sound_soulhunter_hit.play()
+                        # self.personajes.sound_soulhunter_hit.play()
 
                     self.personajes.recibir_golpe()
                     self.personajes.actualizar_vidas()
@@ -65,10 +65,10 @@ class Nivel_4:
                 elif self.golpes > 0 and not self.personajes.inmunidad:
                     if self.personajes.personaje_actual == 0:  
                         self.huntress_hit = True
-                        self.personajes.sound_huntress_hit.play()
+                        # self.personajes.sound_huntress_hit.play()
                     elif self.personajes.personaje_actual == 1:  
                         self.soulhunter_hit = True
-                        self.personajes.sound_soulhunter_hit.play()
+                        # self.personajes.sound_soulhunter_hit.play()
                     self.personajes.recibir_golpe()
                     self.personajes.actualizar_vidas()
                     self.personajes.actualizar_resistencia()
@@ -81,10 +81,10 @@ class Nivel_4:
                 if self.golpes == 0:
                     if self.personajes.personaje_actual == 0:  # Huntress
                         self.huntress_hit = True
-                        self.personajes.sound_huntress_hit.play()
+                        # self.personajes.sound_huntress_hit.play()
                     elif self.personajes.personaje_actual == 1:  # Soulhunter
                         self.soulhunter_hit = True
-                        self.personajes.sound_soulhunter_hit.play()
+                        # self.personajes.sound_soulhunter_hit.play()
 
                     self.personajes.recibir_golpe()
                     self.personajes.actualizar_vidas()
@@ -96,10 +96,10 @@ class Nivel_4:
                 elif self.golpes > 0 and not self.personajes.inmunidad:
                     if self.personajes.personaje_actual == 0:  
                         self.huntress_hit = True
-                        self.personajes.sound_huntress_hit.play()
+                        # self.personajes.sound_huntress_hit.play()
                     elif self.personajes.personaje_actual == 1:  
                         self.soulhunter_hit = True
-                        self.personajes.sound_soulhunter_hit.play()
+                        # self.personajes.sound_soulhunter_hit.play()
                     self.personajes.recibir_golpe()
                     self.personajes.actualizar_vidas()
                     self.personajes.actualizar_resistencia()
@@ -194,13 +194,13 @@ class Nivel_4:
                     self.personajes.velocidad_horizontal = -self.personajes.velocidad_movimiento
                 elif event.key == K_SPACE:
                     self.personajes.saltar = True
-                    self.personajes.sound_jump.play()
+                    # self.personajes.sound_jump.play()
                 elif event.key == K_a:
                     self.personajes.ataque = True
-                    if self.personajes.personaje_actual == 0:
-                        self.personajes.sound_huntress_attack.play()
-                    elif self.personajes.personaje_actual == 1:
-                        self.personajes.sound_soulhunter_attack.play()
+                    # if self.personajes.personaje_actual == 0:
+                    #     self.personajes.sound_huntress_attack.play()
+                    # elif self.personajes.personaje_actual == 1:
+                    #     self.personajes.sound_soulhunter_attack.play()
                 elif event.key == K_c:
                     self.personajes.cambiar_personaje()
                 elif event.key == pygame.K_ESCAPE:  # Tecla Q para activar el Game Over en pausa

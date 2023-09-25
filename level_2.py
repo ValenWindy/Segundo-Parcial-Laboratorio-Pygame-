@@ -43,8 +43,8 @@ class Nivel_2:
         self.titulo = pygame.display.set_caption("The Huntress and the Soulhunter")
         self.duracion_nivel = self.texto.duracion_nivel
         self.enemigos.crear_enemigo_suelo()     
-        pygame.mixer.music.load("Music/Level_2.wav")
-        pygame.mixer.music.play(-1)
+        # pygame.mixer.music.load("Music/Level_2.wav")
+        # pygame.mixer.music.play(-1)
         self.tiempo_creacion_enemigo = 10.0
         self.ultimo_tiempo_creacion_enemigo = time.time()
         self.nombre_jugador = nombre_jugador
@@ -100,7 +100,7 @@ class Nivel_2:
         for moneda in self.monedas:
             moneda_rect = pygame.Rect(moneda.posicion_actual(), moneda.imagen_actual[0].get_size())
             if personaje_rect.colliderect(moneda_rect):
-                moneda.sound_coin.play()
+                # moneda.sound_coin.play()
                 self.personajes.puntos += moneda.imagen_actual[2]
                 print(self.personajes.puntos)
                 self.monedas.remove(moneda)
@@ -114,10 +114,10 @@ class Nivel_2:
             if personaje_rect.colliderect(fruta_rect):
                 tipo_fruta = fruta["tipo"]
                 if tipo_fruta == "Banana":
-                    self.frutas.sound_banana.play()
+                    # self.frutas.sound_banana.play()
                     self.personajes.resistencia += 1
                 elif tipo_fruta == "Manzana":
-                    self.frutas.sound_apple.play()
+                    # self.frutas.sound_apple.play()
                     self.personajes.vidas += 1
                 self.frutas.lista_frutas.remove(fruta)
                 break
@@ -133,10 +133,10 @@ class Nivel_2:
                 if self.golpes == 0:
                     if self.personajes.personaje_actual == 0:  # Huntress
                         self.huntress_hit = True
-                        self.personajes.sound_huntress_hit.play()
+                        # self.personajes.sound_huntress_hit.play()
                     elif self.personajes.personaje_actual == 1:  # Soulhunter
                         self.soulhunter_hit = True
-                        self.personajes.sound_soulhunter_hit.play()
+                        # self.personajes.sound_soulhunter_hit.play()
 
                     self.personajes.recibir_golpe()
                     self.personajes.actualizar_vidas()
@@ -148,10 +148,10 @@ class Nivel_2:
                 elif self.golpes > 0 and not self.personajes.inmunidad:
                     if self.personajes.personaje_actual == 0:  
                         self.huntress_hit = True
-                        self.personajes.sound_huntress_hit.play()
+                        # self.personajes.sound_huntress_hit.play()
                     elif self.personajes.personaje_actual == 1:  
                         self.soulhunter_hit = True
-                        self.personajes.sound_soulhunter_hit.play()
+                        # self.personajes.sound_soulhunter_hit.play()
 
                     self.personajes.recibir_golpe()
                     self.personajes.actualizar_vidas()
@@ -167,10 +167,10 @@ class Nivel_2:
                 if self.golpes == 0:
                     if self.personajes.personaje_actual == 0:  # Huntress
                         self.huntress_hit = True
-                        self.personajes.sound_huntress_hit.play()
+                        # self.personajes.sound_huntress_hit.play()
                     elif self.personajes.personaje_actual == 1:  # Soulhunter
                         self.soulhunter_hit = True
-                        self.personajes.sound_soulhunter_hit.play()
+                        # self.personajes.sound_soulhunter_hit.play()
 
                     self.personajes.recibir_golpe()
                     self.personajes.actualizar_vidas()
@@ -182,10 +182,10 @@ class Nivel_2:
                 elif self.golpes > 0 and not self.personajes.inmunidad:
                     if self.personajes.personaje_actual == 0:  
                         self.huntress_hit = True
-                        self.personajes.sound_huntress_hit.play()
+                        # self.personajes.sound_huntress_hit.play()
                     elif self.personajes.personaje_actual == 1:  
                         self.soulhunter_hit = True
-                        self.personajes.sound_soulhunter_hit.play()
+                        # self.personajes.sound_soulhunter_hit.play()
 
                     self.personajes.recibir_golpe()
                     self.personajes.actualizar_vidas()
@@ -201,7 +201,7 @@ class Nivel_2:
             if self.personajes.ataque:
                 for enemigo in self.enemigos.lista_enemigos_suelo:
                     if self.personajes.rectangulo_ataque_personaje_2.colliderect(enemigo.enemigo_rect):
-                        self.enemigos.sound_death.play()
+                        # self.enemigos.sound_death.play()
                         self.enemigos.lista_enemigos_suelo.remove(enemigo)
                         self.personajes.puntos += enemigo.valor
                         break
@@ -210,7 +210,7 @@ class Nivel_2:
                 self.rectangulo_punto = pygame.Rect(self.personajes.flecha_posicion, (1, 1))
                 for enemigo in self.enemigos.lista_enemigos_suelo:
                     if self.rectangulo_punto.colliderect(enemigo.enemigo_rect):
-                        self.enemigos.sound_death.play()
+                        # self.enemigos.sound_death.play()
                         self.enemigos.lista_enemigos_suelo.remove(enemigo)
                         self.personajes.puntos += enemigo.valor
                         self.personajes.flecha_posicion = None
@@ -234,13 +234,13 @@ class Nivel_2:
                     self.personajes.velocidad_horizontal = -self.personajes.velocidad_movimiento
                 elif event.key == K_SPACE:
                     self.personajes.saltar = True
-                    self.personajes.sound_jump.play()
+                    # self.personajes.sound_jump.play()
                 elif event.key == K_a:
                     self.personajes.ataque = True
-                    if self.personajes.personaje_actual == 0:
-                        self.personajes.sound_huntress_attack.play()
-                    elif self.personajes.personaje_actual == 1:
-                        self.personajes.sound_soulhunter_attack.play()
+                    # if self.personajes.personaje_actual == 0:
+                    #     self.personajes.sound_huntress_attack.play()
+                    # elif self.personajes.personaje_actual == 1:
+                    #     self.personajes.sound_soulhunter_attack.play()
                 elif event.key == K_c:
                     self.personajes.cambiar_personaje()
                 elif event.key == pygame.K_ESCAPE:  # Tecla Q para activar el Game Over en pausa
